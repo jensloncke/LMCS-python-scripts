@@ -4,8 +4,7 @@ from pathlib import Path
 from configuration.config import CONFIG
 
 
-def filter_data(filename, data_path):
-    df = pd.read_csv(path_data / filename, skiprows=[1] , sep=";", decimal=",")
+def filter_data(df, data_path):
     selectedcolumns = [column for column in df.columns if
                        ("Fura-2(340)(-BG)" in column or "Fura-2(380)" in column)]
     dffiltered = df[selectedcolumns].copy()
@@ -77,11 +76,23 @@ if __name__ == "__main__":
                  if filename[-4:] == ".csv" and os.path.isfile(path_data / filename)]
     print(file_list)
 
-    for filename in file_list:
-        df, dffiltered = filter_data(filename, path_data)
-        dfclean = convert_time_to_seconds(df, dffiltered)
-        calibrated_df = calibrate_traces(dfclean)
-        calibrated_columns = [column for column in calibrated_df.columns if "calibrated" in column]
-        result_df = calibrated_df[calibrated_columns]
-        save_name = filename[:-4] + "_calibrated.csv"
-        result_df.to_csv(CONFIG["paths"]["calibrated"] / save_name, sep=";")
+# put code below behind hastags if you want to decide for each file
+#     for filename in file_list:
+#         df = pd.read_csv(path_data / filename, skiprows=[1], sep=";", decimal=",")
+#         df, dffiltered = filter_data(df, path_data)
+#         dfclean = convert_time_to_seconds(df, dffiltered)
+#         calibrated_df = calibrate_traces(dfclean)
+#         calibrated_columns = [column for column in calibrated_df.columns if "calibrated" in column]
+#         result_df = calibrated_df[calibrated_columns]
+#         save_name = filename[:-4] + "_calibrated.csv"
+#         result_df.to_csv(CONFIG["paths"]["calibrated"] / save_name, sep=";")
+
+# remove hashtags from code below if you want to decide for each file
+    df = pd.read_csv(path_data / CONFIG["filename"], skiprows=[1], sep=";", decimal=",")
+    df, dffiltered = filter_data(df, path_data)
+    dfclean = convert_time_to_seconds(df, dffiltered)
+    calibrated_df = calibrate_traces(dfclean)
+    calibrated_columns = [column for column in calibrated_df.columns if "calibrated" in column]
+    result_df = calibrated_df[calibrated_columns]
+    save_name = CONFIG["filename"][:-4] + "_calibrated.csv"
+    result_df.to_csv(CONFIG["paths"]["calibrated"] / save_name, sep=";")
