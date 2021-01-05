@@ -1,0 +1,10 @@
+paths:
+  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\Ca2+ mtCEPIAred microscope\\20200917-HEKRyR2-CISD2\\Analysis"
+  response: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\Ca2+ mtCEPIAred microscope\\20200917-HEKRyR2-CISD2\\Response"
+constants:
+  example_bool: False
+  analysis_start_time: 218
+  max_peak_width: 50
+  cut_off_percentage: 0.05
+  peak_index_delta: 2
+filename: "KO7_extracted_ratio.csv"
