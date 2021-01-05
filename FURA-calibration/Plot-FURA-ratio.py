@@ -1,8 +1,6 @@
 import pandas as pd
 import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
-import matplotlib.ticker as plticker
+import plotly.express as px
 from pathlib import Path
 from configuration.config import CONFIG
 
@@ -35,12 +33,9 @@ def convert_time_to_seconds(originaldf, filtereddf):
 
 
 def plot_data(df, save_name, save_path):
-    sns.set(font_scale=0.5)
-    plt.figure()
-    ax = sns.lineplot(data=df, legend=False)
-    loc = plticker.MultipleLocator(base=25)  # this locator puts ticks at regular intervals
-    ax.xaxis.set_major_locator(loc)
-    plt.savefig(path_plots / save_name)
+    fig = px.line(df, title = save_name[:-4])
+    fig_save = os.path.join(save_path, save_name)
+    fig.write_html(fig_save)
 
 
 if __name__ == "__main__":
@@ -60,6 +55,6 @@ if __name__ == "__main__":
         df = pd.read_csv(path_data / filename, skiprows=[1], sep=";", decimal=",")
         df, dfratio = filter_data(df, path_data)
         dfclean = convert_time_to_seconds(df, dfratio)
-        save_name = filename[:-4] + "_raw_ratio.png"
+        save_name = filename[:-4] + "_raw_ratio.html"
         plot_data(dfclean, save_name, path_plots)
 

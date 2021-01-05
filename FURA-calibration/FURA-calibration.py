@@ -4,9 +4,9 @@ from pathlib import Path
 from configuration.config import CONFIG
 
 
-def filter_data(df, data_path):
+def filter_data(df):
     selectedcolumns = [column for column in df.columns if
-                       ("Fura-2(340)(-BG)" in column or "Fura-2(380)" in column)]
+                       ("Fura-2(340)(-BG)" in column or "Fura-2(380)(-BG)" in column)]
     dffiltered = df[selectedcolumns].copy()
 
     for column_name in selectedcolumns:
@@ -30,39 +30,30 @@ def convert_time_to_seconds(originaldf, filtereddf):
 
 
 def calibrate_traces(dataframe):
-    raw380_and_ratios = [column for column in dataframe.columns if
-                         "Ratio" in column or "380" in column and "(-BG)" not in column]
+    val_380_and_ratios = [column for column in dataframe.columns if
+                         "Ratio" in column or "380" in column]
 
-    dataframe_filtered = dataframe[raw380_and_ratios].copy()
+    dataframe_filtered = dataframe[val_380_and_ratios].copy()
 
-    for column_name in raw380_and_ratios:
+    for column_name in val_380_and_ratios:
         if "Ratio" in column_name:
-            column_name2 = column_name.replace("BGCorr", "")
-            column_name2 = column_name2.replace("(Ratio)(-BG)", "(380)")
+            column_name2 = column_name.replace("(Ratio)", "(380)")
             column_name2 = column_name2.replace("Channel0", "Channel1")
-            min_380 = dataframe_filtered[column_name2].loc[CONFIG["constants"]["min_start_time"]:CONFIG["constants"]["min_end_time"]].mean()
-            max_380 = dataframe_filtered[column_name2].loc[CONFIG["constants"]["max_start_time"]:CONFIG["constants"]["max_end_time"]].mean()
-            min_ratio = dataframe_filtered[column_name].loc[CONFIG["constants"]["min_start_time"]:CONFIG["constants"]["min_end_time"]].mean()
-            max_ratio = dataframe_filtered[column_name].loc[CONFIG["constants"]["max_start_time"]:CONFIG["constants"]["max_end_time"]].mean()
+
+            slice_min = dataframe_filtered[column_name].loc[CONFIG["constants"]["min_start_time"]:CONFIG["constants"]["min_end_time"]]
+            minimum = slice_min.idxmin()
+            slice_max = dataframe_filtered[column_name].loc[CONFIG["constants"]["max_start_time"]:CONFIG["constants"]["max_end_time"]]
+            maximum = slice_max.idxmax()
+            min_380 = dataframe_filtered[column_name2].loc[minimum]
+            max_380 = dataframe_filtered[column_name2].loc[maximum]
+            min_ratio = dataframe_filtered[column_name].loc[minimum]
+            max_ratio = dataframe_filtered[column_name].loc[maximum]
             calibrated = 225 * (min_380 / max_380) * ((dataframe_filtered[column_name] - min_ratio) /
                                                       (max_ratio - dataframe_filtered[column_name]))
             calibrated_column = column_name2.replace("380", "calibrated")
             calibrated_column = calibrated_column.replace("Channel1", "")
             dataframe_filtered[calibrated_column] = calibrated
     return dataframe_filtered
-
-
-    savename = filename[:-4] + "_extracted.csv"
-    dffiltered.iloc[1:].to_csv(path_extracted / savename,
-                               sep=";")  # / operator overridden as magic method to append pathnames
-    selectedcolumnsratio = [column for column in dffiltered.columns if
-                            ("Ratio" in column or "TimeStamp" in column)]
-
-    dffilteredratio = dffiltered[selectedcolumnsratio].copy()
-
-    savenameratio = filename[:-4] + "_ratio.csv"
-    dffilteredratio.to_csv(path_ratio / savenameratio,
-                           sep=";")
 
 
 if __name__ == "__main__":
@@ -79,7 +70,7 @@ if __name__ == "__main__":
 # put code below behind hastags if you want to decide for each file
 #     for filename in file_list:
 #         df = pd.read_csv(path_data / filename, skiprows=[1], sep=";", decimal=",")
-#         df, dffiltered = filter_data(df, path_data)
+#         df, dffiltered = filter_data(df)
 #         dfclean = convert_time_to_seconds(df, dffiltered)
 #         calibrated_df = calibrate_traces(dfclean)
 #         calibrated_columns = [column for column in calibrated_df.columns if "calibrated" in column]
@@ -89,7 +80,7 @@ if __name__ == "__main__":
 
 # remove hashtags from code below if you want to decide for each file
     df = pd.read_csv(path_data / CONFIG["filename"], skiprows=[1], sep=";", decimal=",")
-    df, dffiltered = filter_data(df, path_data)
+    df, dffiltered = filter_data(df)
     dfclean = convert_time_to_seconds(df, dffiltered)
     calibrated_df = calibrate_traces(dfclean)
     calibrated_columns = [column for column in calibrated_df.columns if "calibrated" in column]

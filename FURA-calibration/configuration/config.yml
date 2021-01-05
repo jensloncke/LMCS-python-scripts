@@ -4,8 +4,8 @@ paths:
   plots: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\Ca2+_FURA_microscope\\20200716-Jens-ATP-CISD2KOHeLaT1\\Raw_plots"
 constants:
   example_bool: False
-  min_start_time: 700
-  min_end_time: 750
-  max_start_time: 750
-  max_end_time: 850
-filename: "202007126-2.5um_ATPHeLa T1 KO pool-1.csv"
+  min_start_time: 690
+  min_end_time: 735
+  max_start_time: 735
+  max_end_time: 861
+filename: "202007126-2.5um_ATPHeLa T1 KO pool-4.csv"
