@@ -8,4 +8,5 @@ constants:
   min_end_time: 735
   max_start_time: 735
   max_end_time: 861
+# write null if you want to exectute the script for all data files in your path
 filename: "202007126-2.5um_ATPHeLa T1 KO pool-4.csv"
