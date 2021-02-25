@@ -70,7 +70,7 @@ if __name__ == "__main__":
     #     frequency = xf[fourier_max]
     #     oscillations_freq[column_name] = frequency
     # print(oscillations_freq)
-    #
+
 
 
 
