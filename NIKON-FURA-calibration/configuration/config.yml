@@ -8,4 +8,4 @@ constants:
   max_start_time: 250
   max_end_time: 325
 # write null if you want to exectute the script for all data files in your path
-filename: "20210218_KO_CISD2_ATP_1 analysis.xlsx"
+filename: null
