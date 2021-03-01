@@ -20,10 +20,3 @@ if __name__ == "__main__":
         video = nd2reader.ND2Reader(path_data / filename)
         time_information = video.timesteps / 1000
         np.savetxt(path_time / save_name, time_information, fmt='%d')
-        # ca_bound = pd.read_excel(path_data / filename, sheet_name="340", engine='openpyxl')
-        # ca_bound.drop(ca_bound.columns[0], axis=1, inplace=True)
-        # ca_free = pd.read_excel(path_data / filename, sheet_name="380", engine='openpyxl')
-        # ca_free.drop(ca_free.columns[0], axis=1, inplace=True)
-        # df = ca_bound.div(ca_free)
-        # save_name = filename[:-5] + "_raw_ratio.html"
-        # plot_data(df, save_name, path_plots)
