@@ -19,4 +19,4 @@ if __name__ == "__main__":
         save_name = filename[:-4] + "_time.txt"
         video = nd2reader.ND2Reader(path_data / filename)
         time_information = video.timesteps / 1000
-        np.savetxt(path_time / save_name, time_information, fmt='%d')
+        np.savetxt(path_time / save_name, time_information, fmt="%1.9f")
