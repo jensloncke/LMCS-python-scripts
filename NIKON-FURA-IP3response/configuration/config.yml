@@ -1,0 +1,9 @@
+paths:
+  data: "C:\\Users\\u0132307\\Desktop\\Analysis"
+  response: "C:\\Users\\u0132307\\Desktop\\Analysis\\Response"
+constants:
+  baseline_start_time: 40
+  baseline_end_time: 50
+  response_start_time: 60
+  response_end_time: 100
+filename: "20210304_KO_Bcl2CISD2_ATP_1analysis_calibrated.xlsx"
