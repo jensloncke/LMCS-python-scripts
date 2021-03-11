@@ -62,7 +62,7 @@ def analyse_data(df: pd.DataFrame):
     df_result = pd.DataFrame(columns=df.columns, index=["SOICR_act", "SOICR_end"])
 
     for column_name, column in df.iteritems():
-        SOICR = analyse_column(column)
+        SOICR_act, SOICR_end = analyse_column(column)
         df_result.loc["SOICR_act", column_name] = SOICR_act
         df_result.loc["SOICR_end", column_name] = SOICR_end
 
