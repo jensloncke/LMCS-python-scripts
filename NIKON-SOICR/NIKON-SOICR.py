@@ -6,12 +6,12 @@ from configuration.config import CONFIG  #. = submap (submodule)
 
 
 def treat_filename(path, filename):
-    data_to_analyze = pd.read_excel(path_data / filename, sheet_name='erCEPIA1', engine='openpyxl')
+    data_to_analyze = pd.read_excel(path_data / filename, sheet_name='erCEPIA1_rfu750', engine='openpyxl')
     df = F_Fzero(data_to_analyze)
     result = analyse_data(df)
     result.drop(result.columns[0], axis=1, inplace=True)
-    save_name_response = filename[:-5] + "_response.xlsx"
-    save_name_yaml = filename[:-5] + "config-parameters.yml"
+    save_name_response = filename[:-5] + "_response_rfu750.xlsx"
+    save_name_yaml = filename[:-5] + "config-parameters_rfu750.yml"
     result.to_excel(path_response / save_name_response)
     with open(path_response / save_name_yaml,
               'w') as file:  # with zorgt er voor dat file.close niet meer nodig is na with block

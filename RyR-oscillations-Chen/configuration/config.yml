@@ -1,0 +1,25 @@
+paths:
+  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210225-TrexCISD2-FURA-RerCEPIA-Ca2+-WayneChen\\Quantification\\Oscillations-FURA"
+  osc: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210225-TrexCISD2-FURA-RerCEPIA-Ca2+-WayneChen\\Quantification\\FURA-oscillations"
+constants:
+  smoothing_constant: 7
+  stdev_non_oscillating_trace: 0.0015
+  baseline_start: 103
+  baseline_end: 118
+  p1_start: 0
+  p1_end: 60
+  p2_start: 100
+  p2_end: 160
+  p3_start: 220
+  p3_end: 280
+  p4_start: 280
+  p4_end: 340
+  p5_start: 340
+  p5_end: 400
+  p6_start: 400
+  p6_end: 460
+  p7_start: 460
+  p7_end: 520
+filename: "20210225-KO1-CISD2-Quantify-oscillations.xlsx"
+sheetname: "Remove no baseline"
+

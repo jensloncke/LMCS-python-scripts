@@ -1,12 +1,13 @@
 paths:
-  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210218-TrexCISD2-FURA-RerCEPIA-Ca2+-Chen\\Quantification"
-  SOICR: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210218-TrexCISD2-FURA-RerCEPIA-Ca2+-Chen\\Quantification\\SOICR"
+  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210225-TrexCISD2-FURA-RerCEPIA-Ca2+-WayneChen\\Quantification"
+  SOICR: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210225-TrexCISD2-FURA-RerCEPIA-Ca2+-WayneChen\\Quantification\\SOICR"
 constants:
-  threshold_start_time: 385
-  threshold_end_time: 485
+  threshold_start_time: 245
+  threshold_end_time: 305
   cut_off_percentage: 0.01
-  tetracaine_start_time: 490
-  tetracaine_end_time: 523
-  caffeine_start_time: 523
-  caffeine_end_time: 553
-filename: "20210218-WT6.xlsx"
+  tetracaine_start_time: 305
+  tetracaine_end_time: 340
+  caffeine_start_time: 343
+  caffeine_end_time: 393
+filename: "20210225-WT2.xlsx"
+
