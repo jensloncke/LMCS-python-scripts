@@ -80,9 +80,9 @@ def quantify_responses(df: pd.DataFrame, start, end):
             results.loc["Osc_cells", column_name] = True
             results.loc["Oscillations", column_name] = len(max_idx)
 
-        results.loc["Osc_cells"] = results.loc["Osc_cells"].sum() / len(results.loc["Osc_cells"])
         results.loc[["Avg_amplitude", "Max_amplitude"], column_name] = avg_peak, max_peak
         results.loc["AUC", column_name] = auc
+    results.loc["Osc_cells"] = results.loc["Osc_cells"].sum() / len(results.loc["Osc_cells"])
     po.plot(px.line(smoothed_df))
     return results
 
