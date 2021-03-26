@@ -1,8 +1,0 @@
-paths:
-  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\Ca2+_FURA_microscope\\20200716-Jens-ATP-CISD2KOHeLaT1\\Calibrated"
-  analysis: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\Ca2+_FURA_microscope\\20200716-Jens-ATP-CISD2KOHeLaT1\\Analysed-oscillations"
-constants:
-  osc_start_time: 150
-  osc_end_time: 350
-# write null if you want to exectute the script for all data files in your path
-filename: "202007126-2.5um_ATPHeLa T1 WT pool-2_calibrated.csv"

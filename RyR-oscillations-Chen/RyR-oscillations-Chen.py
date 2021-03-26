@@ -11,10 +11,19 @@ import yaml
 
 
 def set_index(df: pd.DataFrame):
-    tijd = [col for col in df.columns if "ime" in col]
-    df.set_index(tijd, inplace=True)
-    df.dropna(inplace=True)
-    return df.copy()
+    matches = ["Time [s]", "time [s]", "Time", "time", "Time (s)", "time (s)", "Time(s)", "time(s)", "T", "t",
+               "tijd", "Tijd", "tijd (s)", "Tijd (s)", "tijd(s)", "Tijd(s)", "TIME", "TIJD", "tempo", "Tempo", "tíma"]
+    if any(match in df.columns for match in matches):
+        colnames = df.columns.tolist()
+        match = ''.join(list(set(colnames) & set(matches)))
+        print(match)
+        tijd = [col for col in df.columns if match in col]
+        df.set_index(tijd, inplace=True)
+        df.dropna(inplace=True)
+        return df.copy()
+    else:
+        return df.copy()
+
 
 
 def substract_baseline(df: pd.DataFrame, t_start, t_end):
