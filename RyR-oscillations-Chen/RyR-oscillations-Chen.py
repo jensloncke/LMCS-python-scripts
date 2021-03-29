@@ -25,7 +25,6 @@ def set_index(df: pd.DataFrame):
         return df.copy()
 
 
-
 def substract_baseline(df: pd.DataFrame, t_start, t_end):
     for column_name, column in df.iteritems():
         baseline_slice = column.loc[t_start:t_end,]
@@ -39,13 +38,23 @@ def smooth_column(column, window_length):
 
 
 def detect_local_max_idx(column, raw_trace):
-    mask = (column.values[1:-1] > column.values[2:]) & (column.values[1:-1] > column.values[0:-2])
-    approx_max_idx = np.argwhere(mask) + 1
+    padded_vals_max = np.concatenate([[-np.inf], column.values, [-np.inf]])
+    mask = (padded_vals_max[1:-1] >= padded_vals_max[2:]) & (padded_vals_max[1:-1] > padded_vals_max[0:-2])
+    padded_vals_min = np.concatenate([[np.inf], column.values, [np.inf]])
+    initial_mask_min = (padded_vals_min[1:-1] < padded_vals_min[2:]) & (padded_vals_min[1:-1] < padded_vals_min[0:-2])
+    rev_initial_mask_min = initial_mask_min[::-1]
+    mask_min = np.concatenate((initial_mask_min, rev_initial_mask_min))
+    approx_max_idx = np.argwhere(mask)[:,0]
+    approx_min_idx = np.argwhere(mask_min)[:,0]
     max_idx = []
     if approx_max_idx.size != 0:
-        for value in np.nditer(approx_max_idx):
-            true_max_idx = np.argmax(raw_trace.values[max(0, value - 3) : min(len(raw_trace)-1, value + 3)])
-            max_idx.append(true_max_idx + value -3)
+        for approx_idx in approx_max_idx:
+            true_max_idx = np.argmax(raw_trace.values[max(0, approx_idx - 3) : min(len(raw_trace), approx_idx + 3)])
+            true_max_idx += approx_idx - 3
+            curr_min_idx = np.argmax(approx_min_idx > approx_idx)
+            true_min = np.min(raw_trace.values[max(0, curr_min_idx - 3) : min(len(raw_trace), curr_min_idx + 3)])
+            if raw_trace.values[true_max_idx] - true_min > CONFIG["constants"]["peak_threshold"]:
+                max_idx.append(true_max_idx)
     return max_idx
 
 
@@ -56,160 +65,46 @@ def extract_peak_values(column, max_idx):
     return np.mean(peak_values), np.max(peak_values)
 
 
-def substract_best_fitting_line(df: pd.DataFrame, detrendstart, detrendend):
-    df = df.copy()
-    df_trend = df.loc[detrendstart:detrendend]
-    x = df.index
-    x_trend = df_trend.index
-    for column_name, column in df.iteritems():
-        y = column.values
-        y_trend = df_trend[column_name].values
-        slope, intercept, r, p, se = linregress(x_trend, y_trend)
-        df[column_name] = y - (x*slope + intercept)
-    return df
-
-
-def extract_frequencies(df: pd.DataFrame, windowing=False):
-
+def extract_frequencies(df: pd.DataFrame):
     df_baseline = substract_baseline(df, CONFIG["constants"]["baseline_start"], CONFIG["constants"]["baseline_end"])
-    slice_1 = df.loc[CONFIG["constants"]["p1_start"]: CONFIG["constants"]["p1_end"], :]
-    slice_2 = df.loc[CONFIG["constants"]["p2_start"]: CONFIG["constants"]["p2_end"], :]
-    slice_3 = df.loc[CONFIG["constants"]["p3_start"]: CONFIG["constants"]["p3_end"], :]
-    slice_4 = df.loc[CONFIG["constants"]["p4_start"]: CONFIG["constants"]["p4_end"], :]
-    slice_5 = df.loc[CONFIG["constants"]["p5_start"]: CONFIG["constants"]["p5_end"], :]
-    slice_6 = df.loc[CONFIG["constants"]["p6_start"]: CONFIG["constants"]["p6_end"], :]
-    slice_7 = df.loc[CONFIG["constants"]["p7_start"]: CONFIG["constants"]["p7_end"], :]
+    po.plot(px.line(df_baseline))
+    po.plot(px.line(smooth_df(df_baseline)))
+    conc_vals = CONFIG["constants"]["concentrations"]
+    start_times = CONFIG["constants"]["concentration_start"]
+    end_times = CONFIG["constants"]["concentration_end"]
+    list_df_results = []
+    for concentration, start, end in zip(conc_vals, start_times, end_times):
+        slice = df_baseline.loc[start:end, :]
+        results = pd.DataFrame(columns=slice.columns, index=[f"osc_{concentration}", f"amp_avg_{concentration}",
+                                                             f"osc_cells_{concentration}", f"amp_max_{concentration}"],
+                               dtype=np.float64)
+        smoothed_df = pd.DataFrame(columns=slice.columns, index=slice.index)
 
-    results = pd.DataFrame(index=["osc_1.5", "amp_avg_1.5", "osc_cells_1.5", "amp_max_1.5",
-                                  "osc_0", "amp_avg_0", "osc_cells_0", "amp_max_0",
-                                  "osc_0.2", "amp_avg_0.2", "osc_cells_0.2", "amp_max_0.2",
-                                  "osc_0.3", "amp_avg_0.3", "osc_cells_0.3", "amp_max_0.3",
-                                  "osc_0.5", "amp_avg_0.5", "osc_cells_0.5", "amp_max_0.5",
-                                  "osc_1", "amp_avg_1", "osc_cells_1", "amp_max_1",
-                                  "osc_2", "amp_avg_2", "osc_cells_2", "amp_max_2"], columns=slice_1.columns, dtype=np.float64)
+        for column_name, column in slice.iteritems():
+            smoothed_df[column_name] = smooth_column(column, CONFIG["constants"]["smoothing_constant"])
+            max_idx = detect_local_max_idx(smoothed_df[column_name], slice[column_name])
+            avg_peak, max_peak = extract_peak_values(slice[column_name], max_idx)
+            if smoothed_df[column_name].std() < CONFIG["constants"]["stdev_non_oscillating_trace"]:
+                results.loc[f"osc_{concentration}", column_name] = 0
+                results.loc[f"osc_cells_{concentration}", column_name] = False
+                results.loc[f"amp_avg_{concentration}", column_name] = 0
+                results.loc[f"amp_max_{concentration}", column_name] = 0
+            else:
+                results.loc[f"osc_cells_{concentration}", column_name] = True
+                results.loc[f"osc_{concentration}", column_name] = len(max_idx)
+                results.loc[[f"amp_avg_{concentration}", f"amp_max_{concentration}"], column_name] = avg_peak, max_peak
+        if concentration == 0:
+            print(smoothed_df.std())
+        results.loc[f"osc_cells_{concentration}"] = results.loc[f"osc_cells_{concentration}"].sum() / len(results.loc[f"osc_cells_{concentration}"])
+        list_df_results.append(results)
+    return pd.concat(list_df_results, axis=0)
 
-    detrended_slice_1 = substract_best_fitting_line(slice_1, CONFIG["constants"]["p1_start"], CONFIG["constants"]["p1_end"])
-    detrended_slice_2 = substract_best_fitting_line(slice_2, CONFIG["constants"]["p2_start"], CONFIG["constants"]["p2_end"])
-    detrended_slice_3 = substract_best_fitting_line(slice_3, CONFIG["constants"]["p3_start"], CONFIG["constants"]["p3_end"])
-    detrended_slice_4 = substract_best_fitting_line(slice_4, CONFIG["constants"]["p4_start"], CONFIG["constants"]["p4_end"])
-    detrended_slice_5 = substract_best_fitting_line(slice_5, CONFIG["constants"]["p5_start"], CONFIG["constants"]["p5_end"])
-    detrended_slice_6 = substract_best_fitting_line(slice_6, CONFIG["constants"]["p6_start"], CONFIG["constants"]["p6_end"])
-    detrended_slice_7 = substract_best_fitting_line(slice_7, CONFIG["constants"]["p7_start"], CONFIG["constants"]["p7_end"])
 
-    smoothed_df = slice_1.copy()
-    for column_name, column in detrended_slice_1.iteritems():
-        smoothed_df[column_name] = smooth_column(column, CONFIG["constants"]["smoothing_constant"])
-        max_idx = detect_local_max_idx(smoothed_df[column_name], slice_1[column_name])
-        avg_peak, max_peak = extract_peak_values(slice_1[column_name], max_idx)
-        if smoothed_df[column_name].std() < CONFIG["constants"]["stdev_non_oscillating_trace"]:
-            results.loc["osc_1.5", column_name] = 0
-            results.loc["osc_cells_1.5", column_name] = False
-            results.loc["amp_avg_1.5", column_name] = 0
-            results.loc["amp_max_1.5", column_name] = 0
-        else:
-            results.loc["osc_cells_1.5", column_name] = True
-            results.loc["osc_1.5", column_name] = len(max_idx)
-            results.loc[["amp_avg_1.5", "amp_max_1.5"], column_name] = avg_peak, max_peak
-
-    smoothed_df = slice_2.copy()
-    for column_name, column in detrended_slice_2.iteritems():
-        smoothed_df[column_name] = smooth_column(column, CONFIG["constants"]["smoothing_constant"])
-        print(smoothed_df[column_name].std())
-        max_idx = detect_local_max_idx(smoothed_df[column_name], slice_3[column_name])
-        avg_peak, max_peak = extract_peak_values(slice_2[column_name], max_idx)
-        if smoothed_df[column_name].std() < CONFIG["constants"]["stdev_non_oscillating_trace"]:
-            results.loc["osc_0", column_name] = 0
-            results.loc["osc_cells_0", column_name] = False
-            results.loc["amp_avg_0", column_name] = 0
-            results.loc["amp_max_0", column_name] = 0
-        else:
-            results.loc["osc_cells_0", column_name] = True
-            results.loc["osc_0", column_name] = len(max_idx)
-            results.loc[["amp_avg_0", "amp_max_0"], column_name] = avg_peak, max_peak
-
-    smoothed_df = slice_3.copy()
-    for column_name, column in detrended_slice_3.iteritems():
-        smoothed_df[column_name] = smooth_column(column, CONFIG["constants"]["smoothing_constant"])
-        max_idx = detect_local_max_idx(smoothed_df[column_name], slice_3[column_name])
-        avg_peak, max_peak = extract_peak_values(slice_3[column_name], max_idx)
-        if smoothed_df[column_name].std() < CONFIG["constants"]["stdev_non_oscillating_trace"]:
-            results.loc["osc_0.2", column_name] = 0
-            results.loc["osc_cells_0.2", column_name] = False
-            results.loc["amp_avg_0.2", column_name] = 0
-            results.loc["amp_max_0.2", column_name] = 0
-        else:
-            results.loc["osc_cells_0.2", column_name] = True
-            results.loc["osc_0.2", column_name] = len(max_idx)
-            results.loc[["amp_avg_0.2", "amp_max_0.2"], column_name] = avg_peak, max_peak
-
-    smoothed_df = slice_4.copy()
-    for column_name, column in detrended_slice_4.iteritems():
-        smoothed_df[column_name] = smooth_column(column, CONFIG["constants"]["smoothing_constant"])
-        max_idx = detect_local_max_idx(smoothed_df[column_name], slice_4[column_name])
-        avg_peak, max_peak = extract_peak_values(slice_4[column_name], max_idx)
-        if smoothed_df[column_name].std() < CONFIG["constants"]["stdev_non_oscillating_trace"]:
-            results.loc["osc_0.3", column_name] = 0
-            results.loc["osc_cells_0.3", column_name] = False
-            results.loc["amp_avg_0.3", column_name] = 0
-            results.loc["amp_max_0.3", column_name] = 0
-        else:
-            results.loc["osc_cells_0.3", column_name] = True
-            results.loc["osc_0.3", column_name] = len(max_idx)
-            results.loc[["amp_avg_0.3", "amp_max_0.3"], column_name] = avg_peak, max_peak
-
-    smoothed_df = slice_5.copy()
-    for column_name, column in detrended_slice_5.iteritems():
-        smoothed_df[column_name] = smooth_column(column, CONFIG["constants"]["smoothing_constant"])
-        max_idx = detect_local_max_idx(smoothed_df[column_name], slice_5[column_name])
-        avg_peak, max_peak = extract_peak_values(slice_5[column_name], max_idx)
-        if smoothed_df[column_name].std() < CONFIG["constants"]["stdev_non_oscillating_trace"]:
-            results.loc["osc_0.5", column_name] = 0
-            results.loc["osc_cells_0.5", column_name] = False
-            results.loc["amp_avg_0.5", column_name] = 0
-            results.loc["amp_max_0.5", column_name] = 0
-        else:
-            results.loc["osc_cells_0.5", column_name] = True
-            results.loc["osc_0.5", column_name] = len(max_idx)
-            results.loc[["amp_avg_0.5", "amp_max_0.5"], column_name] = avg_peak, max_peak
-
-    smoothed_df = slice_6.copy()
-    for column_name, column in detrended_slice_6.iteritems():
-        smoothed_df[column_name] = smooth_column(column, CONFIG["constants"]["smoothing_constant"])
-        max_idx = detect_local_max_idx(smoothed_df[column_name], slice_6[column_name])
-        avg_peak, max_peak = extract_peak_values(slice_6[column_name], max_idx)
-        if smoothed_df[column_name].std() < CONFIG["constants"]["stdev_non_oscillating_trace"]:
-            results.loc["osc_1", column_name] = 0
-            results.loc["osc_cells_1", column_name] = False
-            results.loc["amp_avg_1", column_name] = 0
-            results.loc["amp_max_1", column_name] = 0
-        else:
-            results.loc["osc_cells_1", column_name] = True
-            results.loc["osc_1", column_name] = len(max_idx)
-            results.loc[["amp_avg_1", "amp_max_1"], column_name] = avg_peak, max_peak
-
-    smoothed_df = slice_7.copy()
-    for column_name, column in detrended_slice_7.iteritems():
-        smoothed_df[column_name] = smooth_column(column, CONFIG["constants"]["smoothing_constant"])
-        max_idx = detect_local_max_idx(smoothed_df[column_name], slice_7[column_name])
-        avg_peak, max_peak = extract_peak_values(slice_7[column_name], max_idx)
-        if smoothed_df[column_name].std() < CONFIG["constants"]["stdev_non_oscillating_trace"]:
-            results.loc["osc_2", column_name] = 0
-            results.loc["osc_cells_2", column_name] = False
-            results.loc["amp_avg_2", column_name] = 0
-            results.loc["amp_max_2", column_name] = 0
-        else:
-            results.loc["osc_cells_2", column_name] = True
-            results.loc["osc_2", column_name] = len(max_idx)
-            results.loc[["amp_avg_2", "amp_max_2"], column_name] = avg_peak, max_peak
-
-    results.loc["osc_cells_1.5"] = results.loc["osc_cells_1.5"].sum() / len(results.loc["osc_cells_1.5"])
-    results.loc["osc_cells_0"] = results.loc["osc_cells_0"].sum() / len(results.loc["osc_cells_0"])
-    results.loc["osc_cells_0.2"] = results.loc["osc_cells_0.2"].sum() / len(results.loc["osc_cells_0.2"])
-    results.loc["osc_cells_0.3"] = results.loc["osc_cells_0.3"].sum() / len(results.loc["osc_cells_0.3"])
-    results.loc["osc_cells_0.5"] = results.loc["osc_cells_0.5"].sum() / len(results.loc["osc_cells_0.5"])
-    results.loc["osc_cells_1"] = results.loc["osc_cells_1"].sum() / len(results.loc["osc_cells_1"])
-    results.loc["osc_cells_2"] = results.loc["osc_cells_2"].sum() / len(results.loc["osc_cells_2"])
-    return results
+def smooth_df(df):
+    result = df.copy()
+    for column_name, column in df.iteritems():
+        result[column_name] = smooth_column(column, CONFIG["constants"]["smoothing_constant"])
+    return result
 
 
 def main():
@@ -228,7 +123,7 @@ def main():
         df = pd.read_excel(path_data / CONFIG["filename"], sheet_name=CONFIG["sheetname"], na_filter=True, engine='openpyxl')
     df.dropna(inplace=True)
     data = set_index(df)
-    result = extract_frequencies(df, windowing=False)
+    result = extract_frequencies(df)
     save_name = CONFIG["filename"][:-5] + "-quantified.csv"
     save_name_yaml = CONFIG["filename"][:-5] + "-parameters.yml"
     result.to_csv(path_osc / save_name, sep=";", decimal=".")

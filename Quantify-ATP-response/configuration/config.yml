@@ -2,12 +2,13 @@ paths:
   data: "J:\\GBW-0051_IP3 Group\\Rita\\Jens\\20210304_Hela Fura_Jens\\Calibrated"
   osc: "J:\\GBW-0051_IP3 Group\\Rita\\Jens\\20210304_Hela Fura_Jens\\Quantification"
 constants:
-  smoothing_constant: 10
-  stdev_non-oscillating: 25
+  smoothing_constant: 7
+  stdev_non-oscillating: 5
+  peak_threshold: 20
   baseline_start_time: 90
   baseline_end_time: 100
   osc_start_time: 120
-  osc_end_time: 500
+  osc_end_time: 300
 # write null if you want to execute the script for all data files in your path
 filename: "20210304_KO_Bcl2 CISD2_ATP_1 analysis_calibrated.xlsx"
 sheetname: "test"

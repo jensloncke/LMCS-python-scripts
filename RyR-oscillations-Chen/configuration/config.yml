@@ -1,25 +1,15 @@
 paths:
-  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210225-TrexCISD2-FURA-RerCEPIA-Ca2+-WayneChen\\Quantification\\Oscillations-FURA"
+  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210225-TrexCISD2-FURA-RerCEPIA-Ca2+-WayneChen\\Quantification\\excelOscillations-FURA"
   osc: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210225-TrexCISD2-FURA-RerCEPIA-Ca2+-WayneChen\\Quantification\\FURA-oscillations"
 constants:
-  smoothing_constant: 7
-  stdev_non_oscillating_trace: 0.0015
-  baseline_start: 103
-  baseline_end: 118
-  p1_start: 0
-  p1_end: 60
-  p2_start: 100
-  p2_end: 160
-  p3_start: 220
-  p3_end: 280
-  p4_start: 280
-  p4_end: 340
-  p5_start: 340
-  p5_end: 400
-  p6_start: 400
-  p6_end: 460
-  p7_start: 460
-  p7_end: 520
-filename: "20210225-KO1-CISD2-Quantify-oscillations.xlsx"
+  smoothing_constant: 4
+  stdev_non_oscillating_trace: 0.0008
+  peak_threshold: 0.01
+  baseline_start: 197
+  baseline_end: 212
+  concentrations: [1.5, 0, 0.2, 0.3, 0.5, 1, 2]
+  concentration_start: [0, 83, 143, 203, 263, 323, 383]
+  concentration_end: [60, 143, 203, 263, 323, 383, 443]
+filename: "20210225-WT2-Quantify-oscillations.xlsx"
 sheetname: "Remove no baseline"
 

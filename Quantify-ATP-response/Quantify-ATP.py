@@ -1,6 +1,6 @@
 from scipy.stats import linregress
 import pandas as pd
-pd.options.mode.chained_assignment = None
+# pd.options.mode.chained_assignment = None
 from scipy.signal import nuttall
 from scipy.ndimage import gaussian_filter1d
 import numpy as np
@@ -13,7 +13,8 @@ import yaml
 
 def set_index(df: pd.DataFrame):
     matches = ["Time [s]", "time [s]", "Time", "time", "Time (s)", "time (s)", "Time(s)", "time(s)", "T", "t",
-               "tijd", "Tijd", "tijd (s)", "Tijd (s)", "tijd(s)", "Tijd(s)", "TIME", "TIJD", "tempo", "Tempo", "tíma"]
+               "tijd", "Tijd", "tijd (s)", "Tijd (s)", "tijd(s)", "Tijd(s)", "TIME", "TIJD", "tempo", "Tempo",
+               "tempo (s)", "Tempo (s)", "tíma", "tíma (s)", "Tíma (s)", "Tíma"]
     if any(match in df.columns for match in matches):
         colnames = df.columns.tolist()
         match = ''.join(list(set(colnames) & set(matches)))
@@ -33,7 +34,8 @@ def substract_baseline(df: pd.DataFrame, t_start, t_end):
     return df.copy()
 
 
-def calculate_auc(column, start_time, end_time):
+def calculate_auc(column):
+    column=column.copy()
     column[column < 0] = 0
     return np.trapz(y=column)
 
@@ -43,13 +45,23 @@ def smooth_column(column, window_length):
 
 
 def detect_local_max_idx(column, raw_trace):
-    mask = (column.values[1:-1] >= column.values[2:]) & (column.values[1:-1] >= column.values[0:-2])
-    approx_max_idx = np.argwhere(mask) + 1
+    padded_vals_max = np.concatenate([[-np.inf], column.values, [-np.inf]])
+    mask = (padded_vals_max[1:-1] >= padded_vals_max[2:]) & (padded_vals_max[1:-1] > padded_vals_max[0:-2])
+    padded_vals_min = np.concatenate([[np.inf], column.values, [np.inf]])
+    initial_mask_min = (padded_vals_min[1:-1] < padded_vals_min[2:]) & (padded_vals_min[1:-1] < padded_vals_min[0:-2])
+    rev_initial_mask_min = initial_mask_min[::-1]
+    mask_min = np.concatenate((initial_mask_min, rev_initial_mask_min))
+    approx_max_idx = np.argwhere(mask)[:,0]
+    approx_min_idx = np.argwhere(mask_min)[:,0]
     max_idx = []
     if approx_max_idx.size != 0:
-        for value in np.nditer(approx_max_idx):
-            true_max_idx = np.argmax(raw_trace.values[max(0, value - 3) : min(len(raw_trace)-1, value + 3)])
-            max_idx.append(true_max_idx + value -3)
+        for approx_idx in approx_max_idx:
+            true_max_idx = np.argmax(raw_trace.values[max(0, approx_idx - 3) : min(len(raw_trace), approx_idx + 3)])
+            true_max_idx += approx_idx - 3
+            curr_min_idx = np.argmax(approx_min_idx > approx_idx)
+            true_min = np.min(raw_trace.values[max(0, curr_min_idx - 3) : min(len(raw_trace), curr_min_idx + 3)])
+            if raw_trace.values[true_max_idx] - true_min > CONFIG["constants"]["peak_threshold"]:
+                max_idx.append(true_max_idx)
     return max_idx
 
 
@@ -65,14 +77,13 @@ def quantify_responses(df: pd.DataFrame, start, end):
     po.plot(px.line(oscillations))
     results = pd.DataFrame(index=["Oscillations","Avg_amplitude", "Max_amplitude", "Osc_cells", "AUC"],
                            columns=oscillations.columns, dtype=np.float64)
-    smoothed_df = oscillations.copy()
+    smoothed_df = pd.DataFrame(columns=oscillations.columns, index=oscillations.index)
 
     for column_name, column in oscillations.iteritems():
         smoothed_df[column_name] = smooth_column(column, CONFIG["constants"]["smoothing_constant"])
         max_idx = detect_local_max_idx(smoothed_df[column_name], oscillations[column_name])
         avg_peak, max_peak = extract_peak_values(oscillations[column_name], max_idx)
-        auc = calculate_auc(oscillations[column_name], start, end)
-        print(oscillations[column_name].std())
+        auc = calculate_auc(oscillations[column_name])
         if oscillations[column_name].std() < CONFIG["constants"]["stdev_non-oscillating"]:
             results.loc["Oscillations", column_name] = 0
             results.loc["Osc_cells", column_name] = False
@@ -82,6 +93,7 @@ def quantify_responses(df: pd.DataFrame, start, end):
 
         results.loc[["Avg_amplitude", "Max_amplitude"], column_name] = avg_peak, max_peak
         results.loc["AUC", column_name] = auc
+    print(oscillations.std())
     results.loc["Osc_cells"] = results.loc["Osc_cells"].sum() / len(results.loc["Osc_cells"])
     po.plot(px.line(smoothed_df))
     return results
