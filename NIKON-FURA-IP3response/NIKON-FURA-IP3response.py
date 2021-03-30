@@ -6,7 +6,8 @@ from configuration.config import CONFIG  #. = submap (submodule)
 
 
 def treat_filename(path, filename):
-    data_to_analyze = pd.read_excel(path_data / filename, engine='openpyxl')
+    data_to_analyze = pd.read_excel(path_data / filename, sheet_name=CONFIG["sheetname"],
+                                    engine='openpyxl')
     result = analyse_data(data_to_analyze)
     result.drop(result.columns[0], axis=1, inplace=True)
     save_name_response = filename[:-5] + "_response.xlsx"
@@ -14,7 +15,7 @@ def treat_filename(path, filename):
     result.to_excel(path_response / save_name_response)
     with open(path_response / save_name_yaml,
               'w') as file:  # with zorgt er voor dat file.close niet meer nodig is na with block
-        yaml.dump(CONFIG["constants"], file)
+        yaml.dump(CONFIG["constants"], file, sort_keys=False)
 
 def calculate_baseline(values: pd.Series, time_values, start_time, end_time):
     baseline_mask = (time_values >= start_time) & (time_values <= end_time)
@@ -76,7 +77,6 @@ if __name__ == "__main__":
 
     file_list = [filename for filename in os.listdir(path_data)
                  if filename[-5:] == ".xlsx" and os.path.isfile(path_data / filename)]
-    print(file_list)
 
     if CONFIG["filename"] is None:
         file_list = [filename for filename in os.listdir(path_data)
