@@ -17,6 +17,7 @@ def treat_filename(path, filename):
               'w') as file:  # with zorgt er voor dat file.close niet meer nodig is na with block
         yaml.dump(CONFIG["constants"], file, sort_keys=False)
 
+
 def calculate_baseline(values: pd.Series, time_values, start_time, end_time):
     baseline_mask = (time_values >= start_time) & (time_values <= end_time)
     baseline = np.median(values[baseline_mask])

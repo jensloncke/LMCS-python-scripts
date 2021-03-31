@@ -2,9 +2,9 @@ paths:
   data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210303-TrexCISD2-FURA-RerCEPIA-store\\Quantification"
   response: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210303-TrexCISD2-FURA-RerCEPIA-store\\Quantification\\TG-response-erCEPIA"
 constants:
-  baseline_start_time: 100
-  baseline_end_time: 110
-  response_start_time: 110
-  response_end_time: 200
-filename: "KO1-CISD2.xlsx"
+  baseline_start_time: 200
+  baseline_end_time: 210
+  response_start_time: 210
+  response_end_time: 300
+filename: "WT2.xlsx"
 sheetname: "FF0_RM_nobaseline"

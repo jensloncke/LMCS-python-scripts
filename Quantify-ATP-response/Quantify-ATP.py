@@ -1,6 +1,4 @@
-from scipy.stats import linregress
 import pandas as pd
-# pd.options.mode.chained_assignment = None
 from scipy.signal import nuttall
 from scipy.ndimage import gaussian_filter1d
 import numpy as np
