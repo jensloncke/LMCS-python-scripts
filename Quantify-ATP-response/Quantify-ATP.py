@@ -43,9 +43,9 @@ def smooth_column(column, window_length):
 
 
 def detect_local_max_idx(column, raw_trace):
-    padded_vals_max = np.concatenate([[-np.inf], column.values, [-np.inf]])
+    padded_vals_max = np.concatenate([column.values, [0]])
     mask = (padded_vals_max[1:-1] >= padded_vals_max[2:]) & (padded_vals_max[1:-1] > padded_vals_max[0:-2])
-    padded_vals_min = np.concatenate([[np.inf], column.values, [np.inf]])
+    padded_vals_min = np.concatenate([column.values, [np.inf]])
     initial_mask_min = (padded_vals_min[1:-1] < padded_vals_min[2:]) & (padded_vals_min[1:-1] < padded_vals_min[0:-2])
     rev_initial_mask_min = initial_mask_min[::-1]
     mask_min = np.concatenate((initial_mask_min, rev_initial_mask_min))
@@ -73,7 +73,7 @@ def extract_peak_values(column, max_idx):
 def quantify_responses(df: pd.DataFrame, start, end):
     oscillations = df.loc[CONFIG["constants"]["osc_start_time"]:CONFIG["constants"]["osc_end_time"], :]
     po.plot(px.line(oscillations))
-    results = pd.DataFrame(index=["Oscillations","Avg_amplitude", "Max_amplitude", "Osc_cells", "AUC"],
+    results = pd.DataFrame(index=["Oscillations","Avg_amplitude", "Max_amplitude", "Osc_cells", "AUC", "STD oscillations"],
                            columns=oscillations.columns, dtype=np.float64)
     smoothed_df = pd.DataFrame(columns=oscillations.columns, index=oscillations.index)
 
@@ -85,13 +85,14 @@ def quantify_responses(df: pd.DataFrame, start, end):
         if oscillations[column_name].std() < CONFIG["constants"]["stdev_non-oscillating"]:
             results.loc["Oscillations", column_name] = 0
             results.loc["Osc_cells", column_name] = False
+            results.loc["STD oscillations", column_name] = oscillations[column_name].std()
         else:
             results.loc["Osc_cells", column_name] = True
             results.loc["Oscillations", column_name] = len(max_idx)
+            results.loc["STD oscillations", column_name] = oscillations[column_name].std()
 
         results.loc[["Avg_amplitude", "Max_amplitude"], column_name] = avg_peak, max_peak
         results.loc["AUC", column_name] = auc
-    print(oscillations.std())
     results.loc["Osc_cells"] = results.loc["Osc_cells"].sum() / len(results.loc["Osc_cells"])
     po.plot(px.line(smoothed_df))
     return results

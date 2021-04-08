@@ -1,15 +1,15 @@
 paths:
-  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210225-TrexCISD2-FURA-RerCEPIA-Ca2+-WayneChen\\Quantification\\excelOscillations-FURA"
-  osc: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210225-TrexCISD2-FURA-RerCEPIA-Ca2+-WayneChen\\Quantification\\FURA-oscillations"
+  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210325-HeLaCISD2-F4-RmtCEPIA3\\Quantification"
+  osc: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210325-HeLaCISD2-F4-RmtCEPIA3\\Quantification\\F4-response"
 constants:
   smoothing_constant: 4
   stdev_non_oscillating_trace: 0.0008
-  peak_threshold: 0.01
-  baseline_start: 197
-  baseline_end: 212
-  concentrations: [1.5, 0, 0.2, 0.3, 0.5, 1, 2]
-  concentration_start: [0, 83, 143, 203, 263, 323, 383]
-  concentration_end: [60, 143, 203, 263, 323, 383, 443]
-filename: "20210225-WT2-Quantify-oscillations.xlsx"
-sheetname: "Remove no baseline"
+  peak_threshold: 0.1
+  baseline_start: 80
+  baseline_end: 100
+  concentrations: [5, 100]
+  concentration_start: [135, 310]
+  concentration_end: [255, 430]
+filename: "20210325-KO1-CISD2.xlsx"
+sheetname: "fluo4_FF0"
 
