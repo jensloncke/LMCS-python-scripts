@@ -38,9 +38,9 @@ def smooth_column(column, window_length):
 
 
 def detect_local_max_idx(column, raw_trace):
-    padded_vals_max = np.concatenate([[-np.inf], column.values, [-np.inf]])
+    padded_vals_max = np.concatenate([column.values, [0]])
     mask = (padded_vals_max[1:-1] >= padded_vals_max[2:]) & (padded_vals_max[1:-1] > padded_vals_max[0:-2])
-    padded_vals_min = np.concatenate([[np.inf], column.values, [np.inf]])
+    padded_vals_min = np.concatenate([column.values, [np.inf]])
     initial_mask_min = (padded_vals_min[1:-1] < padded_vals_min[2:]) & (padded_vals_min[1:-1] < padded_vals_min[0:-2])
     rev_initial_mask_min = initial_mask_min[::-1]
     mask_min = np.concatenate((initial_mask_min, rev_initial_mask_min))
@@ -76,8 +76,7 @@ def extract_frequencies(df: pd.DataFrame):
     for concentration, start, end in zip(conc_vals, start_times, end_times):
         slice = df_baseline.loc[start:end, :]
         results = pd.DataFrame(columns=slice.columns, index=[f"osc_{concentration}", f"amp_avg_{concentration}",
-                                                             f"osc_cells_{concentration}", f"amp_max_{concentration}"],
-                               dtype=np.float64)
+                                                             f"osc_cells_{concentration}", f"amp_max_{concentration}"], dtype=np.float64)
         smoothed_df = pd.DataFrame(columns=slice.columns, index=slice.index)
 
         for column_name, column in slice.iteritems():
@@ -95,8 +94,13 @@ def extract_frequencies(df: pd.DataFrame):
                 results.loc[[f"amp_avg_{concentration}", f"amp_max_{concentration}"], column_name] = avg_peak, max_peak
         if concentration == 0:
             print(smoothed_df.std())
+            results.loc["Genotype", column_name] = CONFIG["Genotype"]
+            results.loc["Day", column_name] = CONFIG["Day"]
+            results.loc["Plate", column_name] = CONFIG["Plate"]
+            results.loc["ID", column_name] = CONFIG["ID"]
         results.loc[f"osc_cells_{concentration}"] = results.loc[f"osc_cells_{concentration}"].sum() / len(results.loc[f"osc_cells_{concentration}"])
         list_df_results.append(results)
+
     return pd.concat(list_df_results, axis=0)
 
 
@@ -123,7 +127,7 @@ def main():
         df = pd.read_excel(path_data / CONFIG["filename"], sheet_name=CONFIG["sheetname"], na_filter=True, engine='openpyxl')
     df.dropna(inplace=True)
     data = set_index(df)
-    result = extract_frequencies(df)
+    result = extract_frequencies(data)
     save_name = CONFIG["filename"][:-5] + "-quantified.csv"
     save_name_yaml = CONFIG["filename"][:-5] + "-parameters.yml"
     result.to_csv(path_osc / save_name, sep=";", decimal=".")

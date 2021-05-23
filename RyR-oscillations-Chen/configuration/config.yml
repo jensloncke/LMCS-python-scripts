@@ -1,15 +1,19 @@
 paths:
-  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210325-HeLaCISD2-F4-RmtCEPIA3\\Quantification"
-  osc: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210325-HeLaCISD2-F4-RmtCEPIA3\\Quantification\\F4-response"
+  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210507-TrexCISD2-oscillations-FURA\\Quantification"
+  osc: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210507-TrexCISD2-oscillations-FURA\\Quantification\\Results"
 constants:
   smoothing_constant: 4
   stdev_non_oscillating_trace: 0.0008
   peak_threshold: 0.1
-  baseline_start: 80
-  baseline_end: 100
-  concentrations: [5, 100]
-  concentration_start: [135, 310]
-  concentration_end: [255, 430]
-filename: "20210325-KO1-CISD2.xlsx"
-sheetname: "fluo4_FF0"
+  baseline_start: 350
+  baseline_end: 370
+  concentrations: [1.5, 0]
+  concentration_start: [1, 200]
+  concentration_end: [150, 350]
+filename: "WT_1_340_Results_ratio.xlsx"
+sheetname: "Sheet1"
+Genotype: "WT"
+Day: "20210506"
+Plate: "20210506_1"
+ID: "20210506_WT_1"
 

@@ -5,23 +5,31 @@ from configuration.config import CONFIG
 
 
 def treat_filename(path, filename):
-    df = pd.read_csv(path / filename, skiprows=[1], sep=";", decimal=",")
-    df = convert_time_to_seconds(df)
-    dffiltered = filter_data(df)
+    df = pd.read_csv(path / filename, skiprows=[1], sep=",", decimal=",")
+    df = set_time(df)
+    dffiltered = filter_data(df.copy())
     calibrated_df = calibrate_traces(dffiltered)
     save_name = filename[:-4] + "_calibrated.csv"
     calibrated_df.to_csv(CONFIG["paths"]["calibrated"] / save_name, sep=";")
 
 
-def convert_time_to_seconds(df):
-    time = pd.to_timedelta(df["TimeStamp::TimeStamp!!D"])
-    df["Time"] = time.dt.total_seconds()
-    return df.set_index("Time")
+def set_time(df: pd.DataFrame):
+    matches = ["Time [s]", "time [s]", "Time", "time", "Time (s)", "time (s)", "Time(s)", "time(s)", "T", "t",
+               "tijd", "Tijd", "tijd (s)", "Tijd (s)", "tijd(s)", "Tijd(s)", "TIME", "TIJD", "tempo", "Tempo",
+               "tempo (s)", "Tempo (s)", "tíma", "tíma (s)", "Tíma (s)", "Tíma", "Time::Relative Time!!R"]
+    if any(match in df.columns for match in matches):
+        colnames = df.columns.tolist()
+        match = ''.join(list(set(colnames) & set(matches)))
+        tijd = [col for col in df.columns if match in col]
+        df.set_index(tijd, inplace=True)
+        df.drop(df.columns[0], axis=1, inplace=True)
+        return df.copy()
+    else:
+        return df.copy()
 
 
 def filter_data(df):
-    selectedcolumns = [column for column in df.columns if
-                       ("Fura-2(340)(-BG)" in column or "Fura-2(380)(-BG)" in column)]
+    selectedcolumns =  [column for column in df.columns if '340' in column]
     dffiltered = df[selectedcolumns].copy()
 
     for column_name in selectedcolumns:

@@ -73,7 +73,7 @@ def extract_peak_values(column, max_idx):
 def quantify_responses(df: pd.DataFrame, start, end):
     oscillations = df.loc[CONFIG["constants"]["osc_start_time"]:CONFIG["constants"]["osc_end_time"], :]
     po.plot(px.line(oscillations))
-    results = pd.DataFrame(index=["Oscillations","Avg_amplitude", "Max_amplitude", "Osc_cells", "AUC", "STD oscillations"],
+    results = pd.DataFrame(index=["Oscillations","Avg_amplitude", "Max_amplitude", "Osc_cells", "AUC", "STD oscillations", "Genotype", "Dose", "ID"],
                            columns=oscillations.columns, dtype=np.float64)
     smoothed_df = pd.DataFrame(columns=oscillations.columns, index=oscillations.index)
 
@@ -93,6 +93,9 @@ def quantify_responses(df: pd.DataFrame, start, end):
 
         results.loc[["Avg_amplitude", "Max_amplitude"], column_name] = avg_peak, max_peak
         results.loc["AUC", column_name] = auc
+        results.loc["Genotype", column_name] = CONFIG["Genotype"]
+        results.loc["Dose", column_name] = CONFIG["Dose"]
+        results.loc["ID", column_name] = CONFIG["ID"]
     results.loc["Osc_cells"] = results.loc["Osc_cells"].sum() / len(results.loc["Osc_cells"])
     po.plot(px.line(smoothed_df))
     return results
