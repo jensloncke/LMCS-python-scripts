@@ -2,75 +2,70 @@ import numpy as np
 import pandas as pd
 import yaml
 
-from configuration.config import CONFIG
-
-
-def set_index(df: pd.DataFrame):
-    matches = ["Time [s]", "time [s]", "Time", "time", "Time (s)", "time (s)", "Time(s)", "time(s)", "T", "t",
-               "tijd", "Tijd", "tijd (s)", "Tijd (s)", "tijd(s)", "Tijd(s)", "TIME", "TIJD", "tempo", "Tempo",
-               "tempo (s)", "Tempo (s)", "tíma", "tíma (s)", "Tíma (s)", "Tíma"]
-    if any(match in df.columns for match in matches):
-        colnames = df.columns.tolist()
-        match = ''.join(list(set(colnames) & set(matches)))
-        tijd = [col for col in df.columns if match in col]
-        df.set_index(tijd, inplace=True)
-        df.dropna(inplace=True)
-        return df.copy()
-    else:
-        return df.copy()
+from configuration.config import CONFIG  #. = submap (submodule)
 
 
 def treat_filename(path, filename):
     data_to_analyze = pd.read_excel(path_data / filename, sheet_name=CONFIG["sheetname"],
                                     engine='openpyxl')
-    data = set_index(data_to_analyze)
-    result = analyse_data(data)
+    result = analyse_data(data_to_analyze)
+    result.drop(result.columns[0], axis=1, inplace=True)
     save_name_response = filename[:-5] + "_response.xlsx"
     save_name_yaml = filename[:-5] + "config-parameters.yml"
     result.to_excel(path_response / save_name_response)
     with open(path_response / save_name_yaml,
-              'w') as file:
+              'w') as file:  # with zorgt er voor dat file.close niet meer nodig is na with block
         yaml.dump(CONFIG["constants"], file, sort_keys=False)
 
 
-def substract_baseline(df: pd.DataFrame, t_start, t_end):
-    for column_name, column in df.iteritems():
-        baseline_slice = column.loc[t_start:t_end,]
-        baseline = baseline_slice.median()
-        df[column_name] = df[column_name] - baseline
-    return df.copy()
+def calculate_baseline(values: pd.Series, time_values, start_time, end_time):
+    baseline_mask = (time_values >= start_time) & (time_values <= end_time)
+    baseline = np.median(values[baseline_mask])
+    return baseline
 
 
-def calculate_response(column_values, start_time, end_time):
-    response_slice = column_values.loc[start_time:end_time]
-    peak_value = np.max(response_slice)
-    return peak_value
+def return_time_index(timestamp, time_list):
+    time_mask = (time_list >= timestamp)
+    time_index = np.argmax(time_mask)
+    return time_index
 
 
-def calculate_auc(column, start_time, end_time):
-    column[column < 0] = 0
-    auc_slice = column.loc[start_time:end_time]
-    return np.trapz(y=column)
+def calculate_response(baseline, column_values, time_values, start_time, end_time):
+    peak_mask = (time_values >= start_time) & (time_values <= end_time)
+    peak_value = np.max(column_values[peak_mask])
+    return peak_value - baseline
 
 
-def analyse_column(column_to_analyse: pd.Series):
-    response = calculate_response(column_to_analyse, CONFIG["constants"]["response_start_time"],
-                                  CONFIG["constants"]["response_end_time"])
-    auc = calculate_auc(column_to_analyse, CONFIG["constants"]["response_start_time"],
-                            CONFIG["constants"]["response_end_time"])
+def calculate_auc(shifted_values, start_time, end_time, time_values):
+    begin_auc = return_time_index(start_time, time_values)
+    end_auc = return_time_index(end_time, time_values)
+    return np.trapz(x=time_values[begin_auc: end_auc], y=shifted_values.iloc[begin_auc: end_auc])
+
+
+def analyse_column(column_to_analyse: pd.Series, tijd: np.ndarray):
+    baseline_response = calculate_baseline(column_to_analyse, tijd, CONFIG["constants"]["baseline_start_time"],
+    CONFIG["constants"]["baseline_end_time"])
+
+    response = calculate_response(baseline_response, column_to_analyse, tijd, CONFIG["constants"]["response_start_time"],
+                                      CONFIG["constants"]["response_end_time"])
+
+
+    shifted_values = column_to_analyse - baseline_response
+    shifted_values = shifted_values.where(shifted_values > 0, 0)
+    auc = calculate_auc(shifted_values, CONFIG["constants"]["response_start_time"],
+                            CONFIG["constants"]["response_end_time"], tijd)
     return response, auc
 
 
 def analyse_data(df: pd.DataFrame):
-    data = df.dropna(axis='columns', how="all")
-    df = substract_baseline(data, CONFIG["constants"]["baseline_start_time"], CONFIG["constants"]["baseline_end_time"])
-    df_result = pd.DataFrame(columns=df.columns, index=["response", "auc", "ID"])
+    df = df.dropna(axis='columns', how="all")
+    tijd = df["Time (s)"].values
+    df_result = pd.DataFrame(columns=df.columns, index=["response", "auc"])
 
     for column_name, column in df.iteritems():
-        response, auc = analyse_column(column)
+        response, auc = analyse_column(column, tijd)
         df_result.loc["response", column_name] = response
         df_result.loc["auc", column_name] = auc
-        df_result.loc["ID", column_name] = CONFIG["ID"]
 
     return df_result
 
