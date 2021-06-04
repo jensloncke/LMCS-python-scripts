@@ -1,10 +1,11 @@
 paths:
-  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210416-TrexCISD2-FURA-ER-store\\Quantification"
-  response: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210416-TrexCISD2-FURA-ER-store\\Quantification\\IO_response"
+  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210510-TrexCISD2-FURA-ERstore\\Quantification"
+  response: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210510-TrexCISD2-FURA-ERstore\\Quantification\\TG_response"
 constants:
-  baseline_start_time: 298
-  baseline_end_time: 318
-  response_start_time: 438
-  response_end_time: 528
-filename: "KO_2_ratio.xlsx"
-sheetname: "RM_no_baseline"
+  baseline_start_time: 146
+  baseline_end_time: 166
+  response_start_time: 170
+  response_end_time: 470
+filename: "WT_4_340_ratio.xlsx"
+sheetname: "Sheet1"
+ID: "20210510_WT_4"

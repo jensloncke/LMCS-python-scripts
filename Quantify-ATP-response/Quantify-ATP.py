@@ -70,12 +70,20 @@ def extract_peak_values(column, max_idx):
     return np.mean(peak_values), np.max(peak_values)
 
 
-def quantify_responses(df: pd.DataFrame, start, end):
+def quantify(data: pd.DataFrame, df: pd.DataFrame, start, end, basal_start, basal_end):
     oscillations = df.loc[CONFIG["constants"]["osc_start_time"]:CONFIG["constants"]["osc_end_time"], :]
-    po.plot(px.line(oscillations))
-    results = pd.DataFrame(index=["Oscillations","Avg_amplitude", "Max_amplitude", "Osc_cells", "AUC", "STD oscillations", "Genotype", "Dose", "ID"],
+    results = pd.DataFrame(index=["Basal", "Oscillations","Avg_amplitude", "Max_amplitude", "Osc_cells", "AUC", "STD oscillations", "Genotype", "Dose", "ID"],
                            columns=oscillations.columns, dtype=np.float64)
+    basal = data.loc[CONFIG["constants"]["basal_start_time"]:CONFIG["constants"]["basal_end_time"], :]
+
+    for column_name, column in basal.iteritems():
+        results.loc["Basal", column_name] = column.median()
+
+    po.plot(px.line(oscillations))
+
     smoothed_df = pd.DataFrame(columns=oscillations.columns, index=oscillations.index)
+
+
 
     for column_name, column in oscillations.iteritems():
         smoothed_df[column_name] = smooth_column(column, CONFIG["constants"]["smoothing_constant"])
@@ -90,7 +98,6 @@ def quantify_responses(df: pd.DataFrame, start, end):
             results.loc["Osc_cells", column_name] = True
             results.loc["Oscillations", column_name] = len(max_idx)
             results.loc["STD oscillations", column_name] = oscillations[column_name].std()
-
         results.loc[["Avg_amplitude", "Max_amplitude"], column_name] = avg_peak, max_peak
         results.loc["AUC", column_name] = auc
         results.loc["Genotype", column_name] = CONFIG["Genotype"]
@@ -118,8 +125,10 @@ def main():
                            engine='openpyxl')
     df.dropna(inplace=True)
     data = set_index(df)
+    dataframe = data.copy()
     df = substract_baseline(data, CONFIG["constants"]["baseline_start_time"], CONFIG["constants"]["baseline_end_time"])
-    result = quantify_responses(df, CONFIG["constants"]["osc_start_time"], CONFIG["constants"]["osc_end_time"])
+    result = quantify(dataframe, df, CONFIG["constants"]["osc_start_time"], CONFIG["constants"]["osc_end_time"],
+                                CONFIG["constants"]["basal_start_time"], CONFIG["constants"]["basal_end_time"])
     save_name = CONFIG["filename"][:-5] + "-quantified.csv"
     save_name_yaml = CONFIG["filename"][:-5] + "-parameters.yml"
     result.to_csv(path_osc / save_name, sep=";", decimal=".")

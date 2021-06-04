@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 from configuration.config import CONFIG
-
+import yaml
 
 def treat_filename(path, filename):
     ca_bound = pd.read_excel(path / filename, sheet_name="340", engine='openpyxl')
@@ -17,7 +17,11 @@ def treat_filename(path, filename):
     df = pd.concat(df_list, axis=1)
     calibrated_df = calibrate_traces(df)
     save_name = filename[:-5] + "_calibrated.xlsx"
+    save_name_yaml = CONFIG["filename"][:-5] + "-parameters.yml"
     calibrated_df.to_excel(CONFIG["paths"]["calibrated"] / save_name)
+    with open(path_calibrated / save_name_yaml,
+              'w') as file:  # with zorgt er voor dat file.close niet meer nodig is na with block
+        yaml.dump(CONFIG["constants"], file, sort_keys=False)
 
 
 def calibrate_traces(dataframe):
@@ -54,7 +58,6 @@ if __name__ == "__main__":
     if CONFIG["filename"] is None:
         file_list = [filename for filename in os.listdir(path_data)
                      if filename[-5:] == ".xlsx" and os.path.isfile(path_data / filename)]
-        print(file_list)
         for filename in file_list:
             treat_filename(path_data, filename)
     else:
