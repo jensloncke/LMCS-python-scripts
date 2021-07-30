@@ -10,7 +10,7 @@ import yaml
 
 
 def set_index(df: pd.DataFrame):
-    matches = ["Time [s]", "time [s]", "Time", "time", "Time (s)", "time (s)", "Time(s)", "time(s)", "T", "t",
+    matches = ["Time [s]", "", "time [s]", "Time", "time", "Time (s)", "time (s)", "Time(s)", "time(s)", "T", "t",
                "tijd", "Tijd", "tijd (s)", "Tijd (s)", "tijd(s)", "Tijd(s)", "TIME", "TIJD", "tempo", "Tempo",
                "tempo (s)", "Tempo (s)", "tíma", "tíma (s)", "Tíma (s)", "Tíma"]
     if any(match in df.columns for match in matches):
@@ -45,7 +45,7 @@ def smooth_column(column, window_length):
 def detect_local_max_idx(column, raw_trace):
     padded_vals_max = np.concatenate([column.values, [0]])
     mask = (padded_vals_max[1:-1] >= padded_vals_max[2:]) & (padded_vals_max[1:-1] > padded_vals_max[0:-2])
-    padded_vals_min = np.concatenate([column.values, [np.inf]])
+    padded_vals_min = np.concatenate([column.values[1:], [0], [np.inf]])
     initial_mask_min = (padded_vals_min[1:-1] < padded_vals_min[2:]) & (padded_vals_min[1:-1] < padded_vals_min[0:-2])
     rev_initial_mask_min = initial_mask_min[::-1]
     mask_min = np.concatenate((initial_mask_min, rev_initial_mask_min))
@@ -129,8 +129,8 @@ def main():
     df = substract_baseline(data, CONFIG["constants"]["baseline_start_time"], CONFIG["constants"]["baseline_end_time"])
     result = quantify(dataframe, df, CONFIG["constants"]["osc_start_time"], CONFIG["constants"]["osc_end_time"],
                                 CONFIG["constants"]["basal_start_time"], CONFIG["constants"]["basal_end_time"])
-    save_name = CONFIG["filename"][:-5] + "-quantified.csv"
-    save_name_yaml = CONFIG["filename"][:-5] + "-parameters.yml"
+    save_name = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_quantified.csv"
+    save_name_yaml = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_parameters.yml"
     result.to_csv(path_osc / save_name, sep=";", decimal=".")
     with open(path_osc / save_name_yaml,
               'w') as file:  # with zorgt er voor dat file.close niet meer nodig is na with block

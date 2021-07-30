@@ -60,13 +60,13 @@ def analyse_column(column_to_analyse: pd.Series, tijd: np.ndarray):
 def analyse_data(df: pd.DataFrame):
     df = df.dropna(axis='columns', how="all")
     tijd = df["Time (s)"].values
-    df_result = pd.DataFrame(columns=df.columns, index=["response", "auc"])
+    df_result = pd.DataFrame(columns=df.columns, index=["response", "auc", "ID"])
 
     for column_name, column in df.iteritems():
         response, auc = analyse_column(column, tijd)
         df_result.loc["response", column_name] = response
         df_result.loc["auc", column_name] = auc
-
+        df_result.loc["ID", column_name] = CONFIG["ID"]
     return df_result
 
 
