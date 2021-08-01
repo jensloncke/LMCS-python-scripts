@@ -65,21 +65,27 @@ def detect_local_max_idx(column, raw_trace):
 
 def extract_peak_values(column, max_idx):
     if len(max_idx) == 0:
-        return 0, 0
+        return 0, 0, 0, np.nan, np.nan
     peak_values = column.values[max_idx]
-    return np.mean(peak_values), np.max(peak_values)
+    max_value = np.max(peak_values)
+    first_local_max_value = peak_values[0]
+    max_time = column.index[np.argmax(column.values)] - CONFIG["constants"]["osc_start_time"]
+    first_peak_series = column.where(column == first_local_max_value)
+    first_peak_time = first_peak_series.idxmax() - CONFIG["constants"]["osc_start_time"]
+    return np.mean(peak_values), max_value, first_local_max_value, max_time, first_peak_time
 
 
 def quantify(data: pd.DataFrame, df: pd.DataFrame, start, end, basal_start, basal_end):
     oscillations = df.loc[CONFIG["constants"]["osc_start_time"]:CONFIG["constants"]["osc_end_time"], :]
-    results = pd.DataFrame(index=["Basal", "Oscillations","Avg_amplitude", "Max_amplitude", "Osc_cells", "AUC", "STD oscillations", "Genotype", "Dose", "ID"],
+    results = pd.DataFrame(index=["Basal", "Oscillations","Avg_amplitude", "Max_amplitude", "First_amplitude",
+                                  "Osc_cells", "AUC", "t_MAX", "t_FIRST", "STD oscillations", "Genotype", "Dose", "ID"],
                            columns=oscillations.columns, dtype=np.float64)
     basal = data.loc[CONFIG["constants"]["basal_start_time"]:CONFIG["constants"]["basal_end_time"], :]
 
     for column_name, column in basal.iteritems():
         results.loc["Basal", column_name] = column.median()
 
-    po.plot(px.line(oscillations))
+    #po.plot(px.line(oscillations))
 
     smoothed_df = pd.DataFrame(columns=oscillations.columns, index=oscillations.index)
 
@@ -88,7 +94,7 @@ def quantify(data: pd.DataFrame, df: pd.DataFrame, start, end, basal_start, basa
     for column_name, column in oscillations.iteritems():
         smoothed_df[column_name] = smooth_column(column, CONFIG["constants"]["smoothing_constant"])
         max_idx = detect_local_max_idx(smoothed_df[column_name], oscillations[column_name])
-        avg_peak, max_peak = extract_peak_values(oscillations[column_name], max_idx)
+        avg_peak, max_peak, first_peak, t_max, t_first = extract_peak_values(oscillations[column_name], max_idx)
         auc = calculate_auc(oscillations[column_name])
         if oscillations[column_name].std() < CONFIG["constants"]["stdev_non-oscillating"]:
             results.loc["Oscillations", column_name] = 0
@@ -98,13 +104,17 @@ def quantify(data: pd.DataFrame, df: pd.DataFrame, start, end, basal_start, basa
             results.loc["Osc_cells", column_name] = True
             results.loc["Oscillations", column_name] = len(max_idx)
             results.loc["STD oscillations", column_name] = oscillations[column_name].std()
-        results.loc[["Avg_amplitude", "Max_amplitude"], column_name] = avg_peak, max_peak
+        results.loc[["Avg_amplitude", "Max_amplitude", "First_amplitude", "t_MAX", "t_FIRST"], column_name] = avg_peak,\
+                                                                                                              max_peak, \
+                                                                                                              first_peak,\
+                                                                                                              t_max, \
+                                                                                                              t_first
         results.loc["AUC", column_name] = auc
         results.loc["Genotype", column_name] = CONFIG["Genotype"]
         results.loc["Dose", column_name] = CONFIG["Dose"]
         results.loc["ID", column_name] = CONFIG["ID"]
     results.loc["Osc_cells"] = results.loc["Osc_cells"].sum() / len(results.loc["Osc_cells"])
-    po.plot(px.line(smoothed_df))
+    #po.plot(px.line(smoothed_df))
     return results
 
 

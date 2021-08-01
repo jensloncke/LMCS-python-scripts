@@ -7,13 +7,13 @@ constants:
   peak_threshold: 0.02
   basal_start_time: 5
   basal_end_time: 25
-  baseline_start_time: 120
-  baseline_end_time: 130
-  osc_start_time: 312
-  osc_end_time: 492
+  baseline_start_time: 270
+  baseline_end_time: 280
+  osc_start_time: 462
+  osc_end_time: 642
 # write null if you want to execute the script for all data files in your path
-filename: "WT_3.xlsx"
+filename: "WT_1.xlsx"
 sheetname: "F4_FF0_resp"
 Genotype: "WT"
 Dose: "100"
-ID: "20210513_WT_3"
+ID: "20210513_WT_1"
