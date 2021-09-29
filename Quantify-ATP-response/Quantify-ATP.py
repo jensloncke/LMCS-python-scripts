@@ -10,9 +10,10 @@ import yaml
 
 
 def set_index(df: pd.DataFrame):
-    matches = ["Time [s]", "", "time [s]", "Time", "time", "Time (s)", "time (s)", "Time(s)", "time(s)", "T", "t",
-               "tijd", "Tijd", "tijd (s)", "Tijd (s)", "tijd(s)", "Tijd(s)", "TIME", "TIJD", "tempo", "Tempo",
-               "tempo (s)", "Tempo (s)", "tíma", "tíma (s)", "Tíma (s)", "Tíma"]
+    matches = ["Time [s]", "", "time [s]", "Time", "time", "Time (s)", "Time (s) ", " Time (s)",
+               "time (s)", "Time(s)", "time(s)", "T", "t", "tijd", "Tijd", "tijd (s)", "Tijd (s)",
+               "tijd(s)", "Tijd(s)", "TIME", "TIJD", "tempo", "Tempo", "tempo (s)", "Tempo (s)",
+               "tíma", "tíma (s)", "Tíma (s)", "Tíma"]
     if any(match in df.columns for match in matches):
         colnames = df.columns.tolist()
         match = ''.join(list(set(colnames) & set(matches)))
@@ -85,7 +86,7 @@ def quantify(data: pd.DataFrame, df: pd.DataFrame, start, end, basal_start, basa
     for column_name, column in basal.iteritems():
         results.loc["Basal", column_name] = column.median()
 
-    #po.plot(px.line(oscillations))
+    po.plot(px.line(oscillations))
 
     smoothed_df = pd.DataFrame(columns=oscillations.columns, index=oscillations.index)
 
@@ -114,7 +115,7 @@ def quantify(data: pd.DataFrame, df: pd.DataFrame, start, end, basal_start, basa
         results.loc["Dose", column_name] = CONFIG["Dose"]
         results.loc["ID", column_name] = CONFIG["ID"]
     results.loc["Osc_cells"] = results.loc["Osc_cells"].sum() / len(results.loc["Osc_cells"])
-    #po.plot(px.line(smoothed_df))
+    po.plot(px.line(smoothed_df))
     return results
 
 
