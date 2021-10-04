@@ -1,19 +1,19 @@
 paths:
-  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210513-HeLaCISD2-F4-RmtCEPIA3\\Quantification"
-  osc: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210513-HeLaCISD2-F4-RmtCEPIA3\\Quantification\\mtCEPIA"
+  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210917_HeLa_CISD2_BCL2_F4\\Quantification"
+  osc: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210917_HeLa_CISD2_BCL2_F4\\Quantification\\Results"
 constants:
   smoothing_constant: 4
-  stdev_non-oscillating: 0.04
-  peak_threshold: 0.02
+  stdev_non-oscillating: 0.057
+  peak_threshold: 0.2
   basal_start_time: 5
   basal_end_time: 25
-  baseline_start_time: 110
-  baseline_end_time: 130
-  osc_start_time: 134
-  osc_end_time: 314
+  baseline_start_time: 80
+  baseline_end_time: 100
+  osc_start_time: 235
+  osc_end_time: 355
 # write null if you want to execute the script for all data files in your path
-filename: "WT_3.xlsx"
-sheetname: "mtCEPIA_FF0_resp"
+filename: "WT_EV_4.xlsx"
+sheetname: "F4_FF0_resp"
 Genotype: "WT"
 Dose: "5"
-ID: "20210513_WT_3"
+ID: "20210917_WT_EV_4"

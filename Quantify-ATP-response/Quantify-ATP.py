@@ -7,6 +7,7 @@ import plotly.offline as po
 from pathlib import Path
 from configuration.config import CONFIG
 import yaml
+import os
 
 
 def set_index(df: pd.DataFrame):
@@ -119,12 +120,34 @@ def quantify(data: pd.DataFrame, df: pd.DataFrame, start, end, basal_start, basa
     return results
 
 
+def find_median_cell(df: pd.DataFrame):
+    median_cell = df.loc["Max_amplitude"].median()
+    median_cell_idx = abs(df.loc["Max_amplitude"] - median_cell).sort_values(ascending=True).index[0]
+    return median_cell_idx
+
+
+def extract_median_cell_from_data(df: pd.DataFrame, median_cell_idx):
+    median_trace_slice = df[median_cell_idx].loc[CONFIG["constants"]["osc_start_time"]-20:CONFIG["constants"]["osc_end_time"]]
+    median_trace_slice = median_trace_slice.to_frame()
+    median_trace_slice.insert(1, "Genotype", CONFIG["Genotype"])
+    median_trace_slice.insert(2, "ID", CONFIG["ID"])
+    median_trace_slice.insert(3, "Dose", CONFIG["Dose"])
+    return median_trace_slice
+
+
+def plot_median_trace(df, save_name, save_path):
+    fig = px.line(df, title = save_name[:-4])
+    fig_save = os.path.join(save_path, save_name)
+    fig.write_html(fig_save)
+
+
 def main():
     import os
 
     path_data = CONFIG["paths"]["data"]
     path_osc = CONFIG["paths"]["osc"]
-    os.makedirs(CONFIG["paths"]["osc"], exist_ok=True)
+    path_median = os.path.join(path_osc, "Median_trace")
+    os.makedirs(path_median, exist_ok=True)
 
     if CONFIG["filename"] is None:
         file_list = [filename for filename in os.listdir(path_data)
@@ -138,11 +161,21 @@ def main():
     data = set_index(df)
     dataframe = data.copy()
     df = substract_baseline(data, CONFIG["constants"]["baseline_start_time"], CONFIG["constants"]["baseline_end_time"])
+
     result = quantify(dataframe, df, CONFIG["constants"]["osc_start_time"], CONFIG["constants"]["osc_end_time"],
                                 CONFIG["constants"]["basal_start_time"], CONFIG["constants"]["basal_end_time"])
+
+    median_cell_idx = find_median_cell(result)
+    median_trace = extract_median_cell_from_data(dataframe, median_cell_idx)
+
+
     save_name = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_quantified.csv"
     save_name_yaml = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_parameters.yml"
+    save_name_trace = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_median_trace.csv"
+    save_name_plot = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_median_trace.html"
     result.to_csv(path_osc / save_name, sep=";", decimal=".")
+    median_trace.to_csv(os.path.join(path_median, save_name_trace), sep=";", decimal=".")
+    plot_median_trace(median_trace.iloc[:, [0]], save_name_plot, path_median)
     with open(path_osc / save_name_yaml,
               'w') as file:  # with zorgt er voor dat file.close niet meer nodig is na with block
         yaml.dump(CONFIG["constants"], file, sort_keys=False)
