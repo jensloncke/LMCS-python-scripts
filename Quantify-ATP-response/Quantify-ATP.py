@@ -77,7 +77,7 @@ def extract_peak_values(column, max_idx):
     return np.mean(peak_values), max_value, first_local_max_value, max_time, first_peak_time
 
 
-def quantify(data: pd.DataFrame, df: pd.DataFrame, start, end, basal_start, basal_end):
+def quantify(data: pd.DataFrame, df: pd.DataFrame, filename):
     oscillations = df.loc[CONFIG["constants"]["osc_start_time"]:CONFIG["constants"]["osc_end_time"], :]
     results = pd.DataFrame(index=["Basal", "Oscillations","Avg_amplitude", "Max_amplitude", "First_amplitude",
                                   "Osc_cells", "AUC", "t_MAX", "t_FIRST", "STD oscillations", "Genotype", "Dose", "ID"],
@@ -114,7 +114,10 @@ def quantify(data: pd.DataFrame, df: pd.DataFrame, start, end, basal_start, basa
         results.loc["AUC", column_name] = auc
         results.loc["Genotype", column_name] = CONFIG["Genotype"]
         results.loc["Dose", column_name] = CONFIG["Dose"]
-        results.loc["ID", column_name] = CONFIG["ID"]
+        if CONFIG["filename"] is None:
+            results.loc["ID", column_name] = CONFIG["ID"] + filename.split("C=2")[1].split("_individual")[0]
+        else:
+            results.loc["ID", column_name] = CONFIG["ID"]
     results.loc["Osc_cells"] = results.loc["Osc_cells"].sum() / len(results.loc["Osc_cells"])
     po.plot(px.line(smoothed_df))
     return results
@@ -132,6 +135,7 @@ def extract_median_cell_from_data(df: pd.DataFrame, median_cell_idx):
     median_trace_slice.insert(1, "Genotype", CONFIG["Genotype"])
     median_trace_slice.insert(2, "ID", CONFIG["ID"])
     median_trace_slice.insert(3, "Dose", CONFIG["Dose"])
+    median_trace_slice.rename(columns={median_trace_slice.columns[0]: "Mean"}, inplace = True)
     return median_trace_slice
 
 
@@ -154,32 +158,51 @@ def main():
                      if filename[-5:] == ".xlsx" and os.path.isfile(path_data / filename)]
         for filename in file_list:
             df = pd.read_excel(path_data / filename, sheet_name=CONFIG["sheetname"], na_filter=True, engine='openpyxl')
+            df.dropna(inplace=True)
+            data = set_index(df)
+            dataframe = data.copy()
+            df = substract_baseline(data, CONFIG["constants"]["baseline_start_time"], CONFIG["constants"]["baseline_end_time"])
+
+            result = quantify(dataframe, df, filename)
+
+            median_cell_idx = find_median_cell(result)
+            median_trace = extract_median_cell_from_data(dataframe, median_cell_idx)
+
+
+            save_name = filename[:-5] + "_" + CONFIG["Dose"] + "_quantified.csv"
+            save_name_yaml = filename[:-5] + "_" + CONFIG["Dose"] + "_parameters.yml"
+            save_name_trace = filename[:-5] + "_" + CONFIG["Dose"] + "_median_trace.csv"
+            save_name_plot = filename[:-5] + "_" + CONFIG["Dose"] + "_median_trace.html"
+            result.to_csv(path_osc / save_name, sep=";", decimal=".")
+            median_trace.to_csv(os.path.join(path_median, save_name_trace), sep=";", decimal=".")
+            plot_median_trace(median_trace.iloc[:, [0]], save_name_plot, path_median)
+            with open(path_osc / save_name_yaml,
+                      'w') as file:  # with zorgt er voor dat file.close niet meer nodig is na with block
+                yaml.dump(CONFIG["constants"], file, sort_keys=False)
     else:
         df = pd.read_excel(path_data / CONFIG["filename"], sheet_name=CONFIG["sheetname"], na_filter=True,
                            engine='openpyxl')
-    df.dropna(inplace=True)
-    data = set_index(df)
-    dataframe = data.copy()
-    df = substract_baseline(data, CONFIG["constants"]["baseline_start_time"], CONFIG["constants"]["baseline_end_time"])
+        df.dropna(inplace=True)
+        data = set_index(df)
+        dataframe = data.copy()
+        df = substract_baseline(data, CONFIG["constants"]["baseline_start_time"], CONFIG["constants"]["baseline_end_time"])
 
-    result = quantify(dataframe, df, CONFIG["constants"]["osc_start_time"], CONFIG["constants"]["osc_end_time"],
-                                CONFIG["constants"]["basal_start_time"], CONFIG["constants"]["basal_end_time"])
+        result = quantify(dataframe, df, CONFIG["filename"])
 
-    median_cell_idx = find_median_cell(result)
-    median_trace = extract_median_cell_from_data(dataframe, median_cell_idx)
+        median_cell_idx = find_median_cell(result)
+        median_trace = extract_median_cell_from_data(dataframe, median_cell_idx)
 
 
-    save_name = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_quantified.csv"
-    save_name_yaml = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_parameters.yml"
-    save_name_trace = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_median_trace.csv"
-    save_name_plot = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_median_trace.html"
-    result.to_csv(path_osc / save_name, sep=";", decimal=".")
-    median_trace.to_csv(os.path.join(path_median, save_name_trace), sep=";", decimal=".")
-    plot_median_trace(median_trace.iloc[:, [0]], save_name_plot, path_median)
-    with open(path_osc / save_name_yaml,
-              'w') as file:  # with zorgt er voor dat file.close niet meer nodig is na with block
-        yaml.dump(CONFIG["constants"], file, sort_keys=False)
-
+        save_name = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_quantified.csv"
+        save_name_yaml = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_parameters.yml"
+        save_name_trace = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_median_trace.csv"
+        save_name_plot = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_median_trace.html"
+        result.to_csv(path_osc / save_name, sep=";", decimal=".")
+        median_trace.to_csv(os.path.join(path_median, save_name_trace), sep=";", decimal=".")
+        plot_median_trace(median_trace.iloc[:, [0]], save_name_plot, path_median)
+        with open(path_osc / save_name_yaml,
+                  'w') as file:  # with zorgt er voor dat file.close niet meer nodig is na with block
+            yaml.dump(CONFIG["constants"], file, sort_keys=False)
 
 
 if __name__ == '__main__':

@@ -1,8 +1,26 @@
 import pandas as pd
 import numpy as np
 from pathlib import Path
+import plotly.express as px
 from configuration.config import CONFIG
 import yaml
+
+
+def set_index(df: pd.DataFrame):
+    matches = ["Time [s]", "", "time [s]", "Time", "time", "Time (s)", "Time (s) ", " Time (s)",
+               "time (s)", "Time(s)", "time(s)", "T", "t", "tijd", "Tijd", "tijd (s)", "Tijd (s)",
+               "tijd(s)", "Tijd(s)", "TIME", "TIJD", "tempo", "Tempo", "tempo (s)", "Tempo (s)",
+               "tíma", "tíma (s)", "Tíma (s)", "Tíma"]
+    if any(match in df.columns for match in matches):
+        colnames = df.columns.tolist()
+        match = ''.join(list(set(colnames) & set(matches)))
+        tijd = [col for col in df.columns if match in col]
+        df.set_index(tijd, inplace=True)
+        df.dropna(inplace=True)
+        return df.copy()
+    else:
+        return df.copy()
+
 
 def treat_filename(path, filename):
     ca_bound = pd.read_excel(path / filename, sheet_name="340", engine='openpyxl')
@@ -18,10 +36,12 @@ def treat_filename(path, filename):
     calibrated_df = calibrate_traces(df)
     save_name = filename[:-5] + "_calibrated.xlsx"
     save_name_yaml = CONFIG["filename"][:-5] + "-parameters.yml"
+    save_name_plot = filename[:-5] + "_calibrated.html"
     calibrated_df.to_excel(CONFIG["paths"]["calibrated"] / save_name)
     with open(path_calibrated / save_name_yaml,
               'w') as file:  # with zorgt er voor dat file.close niet meer nodig is na with block
         yaml.dump(CONFIG["constants"], file, sort_keys=False)
+    plot_data(calibrated_df.loc[:CONFIG["constants"]["min_start_time"]], save_name_plot, path_plots)
 
 
 def calibrate_traces(dataframe):
@@ -29,6 +49,7 @@ def calibrate_traces(dataframe):
                           "ratio" in column or "380" in column]
 
     dataframe_filtered = pd.DataFrame(index=dataframe.index)
+    dataframe_filtered = set_index(dataframe_filtered)
 
     for column_name in val_380_and_ratios:
         if "ratio" in column_name:
@@ -48,12 +69,20 @@ def calibrate_traces(dataframe):
     return dataframe_filtered
 
 
+def plot_data(df, save_name, save_path):
+    fig = px.line(df, title = save_name[:-4])
+    fig_save = os.path.join(save_path, save_name)
+    fig.write_html(fig_save)
+
+
 if __name__ == "__main__":
     import os
 
     path_data = CONFIG["paths"]["data"]
     path_calibrated = CONFIG["paths"]["calibrated"]
+    path_plots = CONFIG["paths"]["plots"]
     os.makedirs(CONFIG["paths"]["calibrated"], exist_ok=True)
+    os.makedirs(CONFIG["paths"]["plots"], exist_ok=True)
 
     if CONFIG["filename"] is None:
         file_list = [filename for filename in os.listdir(path_data)

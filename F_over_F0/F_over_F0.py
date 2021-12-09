@@ -36,13 +36,17 @@ def plot_data(df, save_name, save_path):
     fig.write_html(fig_save)
 
 
-def export_data(data: pd.DataFrame):
+def export_data(data: pd.DataFrame, filename):
     path_F0 = CONFIG["paths"]["F0"]
     os.makedirs(CONFIG["paths"]["F0"], exist_ok=True)
-    save_name = CONFIG["filename"][:-5] + "_F_over_F0.xlsx"
-    save_name_plot = CONFIG["filename"][:-5] + "_F_over_F0.html"
+    save_name = filename[:-5] + "_F_over_F0.xlsx"
+    save_name_plot = filename[:-5] + "_F_over_F0.html"
+    save_name_yaml = filename[:-5] + "_F_over_F0.yml"
     data.to_excel(path_F0 / save_name)
     plot_data(data, save_name_plot, path_F0)
+    with open(path_F0 / save_name_yaml,
+              'w') as file:  # with zorgt er voor dat file.close niet meer nodig is na with block
+        yaml.dump(CONFIG["constants"], file, sort_keys=False)
 
 
 def main():
@@ -55,13 +59,15 @@ def main():
                      if filename[-5:] == ".xlsx" and os.path.isfile(path_data / filename)]
         for filename in file_list:
             df = pd.read_excel(path_data / filename, sheet_name=CONFIG["sheetname"], na_filter=True, engine='openpyxl')
+            data_clean = set_index(df)
+            data_norm = normalize_fluorescence(data_clean)
+            export_data(data_norm, filename)
     else:
         df = pd.read_excel(path_data / CONFIG["filename"], sheet_name=CONFIG["sheetname"], na_filter=True,
                            engine='openpyxl')
-
-    data_clean = set_index(df)
-    data_norm = normalize_fluorescence(data_clean)
-    export_data(data_norm)
+        data_clean = set_index(df)
+        data_norm = normalize_fluorescence(data_clean)
+        export_data(data_norm, CONFIG["filename"])
 
 
 if __name__ == '__main__':

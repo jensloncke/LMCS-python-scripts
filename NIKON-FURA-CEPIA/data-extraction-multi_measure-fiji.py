@@ -39,13 +39,23 @@ if __name__ == "__main__":
 
     for filename in file_list:
         if "340" in filename:
-            print(filename)
-            ca_bound = filter_data(pd.read_csv(path_data / filename, sep=",", decimal=".", index_col=0))
-            filename_380 = filename.replace("340", "380")
-            ca_free = filter_data(pd.read_csv(path_data / filename_380, sep=",", decimal=".", index_col=0))
-            ratio = ca_bound.div(ca_free)
-            save_name = filename[:-4] + "_raw_ratio.html"
-            save_name_plot = save_name.replace("340", "")
-            plot_data(ratio, save_name_plot, path_plots)
-            save_name_excel = filename[:-4] + "_ratio.xlsx"
-            ratio.to_excel(path_plots / save_name_excel)
+            if "C=0" in filename:
+                ca_bound = filter_data(pd.read_csv(path_data / filename, sep=",", decimal=".", index_col=0))
+                filename_380 = filename.replace("C=0_340", "C=1_380")
+                ca_free = filter_data(pd.read_csv(path_data / filename_380, sep=",", decimal=".", index_col=0))
+                ratio = ca_bound.div(ca_free)
+                save_name = filename[:-4] + "_raw_ratio.html"
+                save_name_plot = save_name.replace("340", "")
+                plot_data(ratio, save_name_plot, path_plots)
+                save_name_excel = filename[:-4] + "_ratio.xlsx"
+                ratio.to_excel(path_plots / save_name_excel)
+            else:
+                ca_bound = filter_data(pd.read_csv(path_data / filename, sep=",", decimal=".", index_col=0))
+                filename_380 = filename.replace("340", "380")
+                ca_free = filter_data(pd.read_csv(path_data / filename_380, sep=",", decimal=".", index_col=0))
+                ratio = ca_bound.div(ca_free)
+                save_name = filename[:-4] + "_raw_ratio.html"
+                save_name_plot = save_name.replace("340", "")
+                plot_data(ratio, save_name_plot, path_plots)
+                save_name_excel = filename[:-4] + "_ratio.xlsx"
+                ratio.to_excel(path_plots / save_name_excel)
