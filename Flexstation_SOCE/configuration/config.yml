@@ -1,0 +1,12 @@
+paths:
+  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\SOCE flexstation\\20220119_SOCE_u251_shSKIP"
+  response: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\SOCE flexstation\\20220119_SOCE_u251_shSKIP\\Response"
+constants:
+  baseline_start_time_TG: 60
+  baseline_end_time_TG: 80
+  start_time_TG: 95
+  end_time_TG: 395
+  baseline_start_time_SOCE: 365
+  baseline_end_time_SOCE: 395
+  start_time_SOCE: 395
+  end_time_SOCE: 515
