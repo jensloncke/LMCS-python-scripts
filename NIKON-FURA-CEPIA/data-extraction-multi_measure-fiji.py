@@ -30,22 +30,30 @@ def main():
     for filename in file_list:
         matches = ["340", "405"]
         countermatches = ["380", "470"]
+
         if any(match in filename for match in matches):
             found_matches = [m for m in matches if m in filename]
             matched = found_matches[0]
             matched_index = matches.index(matched)
             countermatched = countermatches[matched_index]
+
             if "C=0" in filename:
+                df = pd.read_csv(path_data / filename, sep=",", decimal=".", index_col=0)
+                df = filter_data(df)
+                save_name_plot = filename[:-4] + "_raw_traces.html"
+                plot_data(df, save_name_plot, path_plots)
+                save_name_excel = filename[:-4] + "_raw.xlsx"
+                df.to_excel(path_plots / save_name_excel)
                 numerator = filter_data(pd.read_csv(path_data / filename, sep=",", decimal=".", index_col=0))
                 filename_denominator = filename.replace("C=0_" + matched, "C=1_" + countermatched)
-                denominator = filter_data(
-                    pd.read_csv(path_data / filename_denominator, sep=",", decimal=".", index_col=0))
+                denominator = filter_data(pd.read_csv(path_data / filename_denominator, sep=",", decimal=".", index_col=0))
                 ratio = numerator.div(denominator)
-                save_name = filename[:-4] + "_raw_ratio.html"
-                save_name_plot = save_name.replace(matched, "")
+                save_name = filename[:-4] + "_ratio.html"
+                save_name_plot = save_name.replace("_"+matched, "")
                 plot_data(ratio, save_name_plot, path_plots)
-                save_name_excel = filename[:-4] + "_ratio.xlsx"
+                save_name_excel = save_name_plot.replace(".html", ".xlsx")
                 ratio.to_excel(path_plots / save_name_excel)
+
         else:
             df = pd.read_csv(path_data / filename, sep=",", decimal=".", index_col=0)
             df = filter_data(df)
