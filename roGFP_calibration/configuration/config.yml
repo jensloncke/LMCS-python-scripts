@@ -1,0 +1,11 @@
+paths:
+  data: "C:\\Users\\jensl\\Box\\PhD\\Data\\NIKON\\20220401_HeLaCISD2_test_roGFP\\Traces"
+  calibrated: "C:\\Users\\jensl\\Box\\PhD\\Data\\NIKON\\20220401_HeLaCISD2_test_roGFP\\Calibrated"
+  plots: "C:\\Users\\jensl\\Box\\PhD\\Data\\NIKON\\20220401_HeLaCISD2_test_roGFP\\Calibrated"
+constants:
+  min_start_time: 600
+  min_end_time: 740
+  max_start_time: 1200
+  max_end_time: 1490
+# write null if you want to execute the script for all data files in your path
+filename: "WT_2.nd2 - C=0_ratio.xlsx"
