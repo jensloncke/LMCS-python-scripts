@@ -1,6 +1,6 @@
 paths:
-  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\SOCE flexstation\\20220119_SOCE_u251_shSKIP"
-  response: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\SOCE flexstation\\20220119_SOCE_u251_shSKIP\\Response"
+  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\SOCE flexstation\\20220208_SOCE_u251_shSKIP"
+  response: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\SOCE flexstation\\20220208_SOCE_u251_shSKIP\\Response"
 constants:
   baseline_start_time_TG: 60
   baseline_end_time_TG: 80

@@ -139,6 +139,15 @@ def extract_median_cell_from_data(df: pd.DataFrame, median_cell_idx):
     return median_trace_slice
 
 
+def extract_traces_from_data(df: pd.DataFrame):
+    trace = df.copy()
+    trace["Genotype"] =  CONFIG["Genotype"]
+    trace["ID"] = CONFIG["ID"]
+    trace["Dose"] = CONFIG["Dose"]
+    trace_slice = trace.loc[CONFIG["constants"]["osc_start_time"] - 20:CONFIG["constants"]["osc_end_time"]]
+    return trace_slice
+
+
 def plot_median_trace(df, save_name, save_path):
     fig = px.line(df, title = save_name[:-4])
     fig_save = os.path.join(save_path, save_name)
@@ -167,14 +176,18 @@ def main():
 
             median_cell_idx = find_median_cell(result)
             median_trace = extract_median_cell_from_data(dataframe, median_cell_idx)
+            traces = extract_traces_from_data(dataframe)
 
 
-            save_name = filename[:-5] + "_" + CONFIG["Dose"] + "_quantified.csv"
-            save_name_yaml = filename[:-5] + "_" + CONFIG["Dose"] + "_parameters.yml"
-            save_name_trace = filename[:-5] + "_" + CONFIG["Dose"] + "_median_trace.csv"
-            save_name_plot = filename[:-5] + "_" + CONFIG["Dose"] + "_median_trace.html"
+            save_name = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_quantified.csv"
+            save_name_yaml = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_parameters.yml"
+            save_name_median_trace = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_median_trace.csv"
+            save_name_traces = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_traces.csv"
+            save_name_plot = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_median_trace.html"
             result.to_csv(path_osc / save_name, sep=";", decimal=".")
-            median_trace.to_csv(os.path.join(path_median, save_name_trace), sep=";", decimal=".")
+            median_trace.to_csv(os.path.join(path_median, save_name_median_trace), sep=";", decimal=".")
+            traces.to_csv(os.path.join(path_median, save_name_traces), sep=";", decimal=".")
+
             plot_median_trace(median_trace.iloc[:, [0]], save_name_plot, path_median)
             with open(path_osc / save_name_yaml,
                       'w') as file:  # with zorgt er voor dat file.close niet meer nodig is na with block
@@ -191,14 +204,16 @@ def main():
 
         median_cell_idx = find_median_cell(result)
         median_trace = extract_median_cell_from_data(dataframe, median_cell_idx)
-
+        traces = extract_traces_from_data(dataframe)
 
         save_name = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_quantified.csv"
         save_name_yaml = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_parameters.yml"
-        save_name_trace = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_median_trace.csv"
+        save_name_median_trace = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_median_trace.csv"
+        save_name_traces = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_traces.csv"
         save_name_plot = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_median_trace.html"
         result.to_csv(path_osc / save_name, sep=";", decimal=".")
-        median_trace.to_csv(os.path.join(path_median, save_name_trace), sep=";", decimal=".")
+        median_trace.to_csv(os.path.join(path_median, save_name_median_trace), sep=";", decimal=".")
+        traces.to_csv(os.path.join(path_median, save_name_traces), sep=";", decimal=".")
         plot_median_trace(median_trace.iloc[:, [0]], save_name_plot, path_median)
         with open(path_osc / save_name_yaml,
                   'w') as file:  # with zorgt er voor dat file.close niet meer nodig is na with block
