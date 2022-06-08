@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import os
 from pathlib import Path
 import plotly.express as px
 from configuration.config import CONFIG
@@ -76,8 +77,6 @@ def plot_data(df, save_name, save_path):
 
 
 if __name__ == "__main__":
-    import os
-
     path_data = CONFIG["paths"]["data"]
     path_calibrated = CONFIG["paths"]["calibrated"]
     path_plots = CONFIG["paths"]["plots"]

@@ -1,12 +1,18 @@
 paths:
+<<<<<<< HEAD
   data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20220505_HeLaCISD2_mtCEPIA_recomp\\F_over_F0"
   osc: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20220505_HeLaCISD2_mtCEPIA_recomp\\Quantification\\Results\\F4"
+=======
+  data: "C:\\Users\\jensl\\Box\\PhD\\Data\\NIKON\\20220331_HeLaCISD2_mtCEPIA_synthetic_linkers\\F_over_F0"
+  osc: "C:\\Users\\jensl\\Box\\PhD\\Data\\NIKON\\20220331_HeLaCISD2_mtCEPIA_synthetic_linkers\\Quantification\\Results\\IO"
+>>>>>>> homebranch
 constants:
   smoothing_constant: 4
   stdev_non-oscillating: 0.04
   peak_threshold: 0.02
   basal_start_time: 5
   basal_end_time: 25
+<<<<<<< HEAD
   baseline_start_time: 80
   baseline_end_time: 100
   osc_start_time: 280
@@ -17,3 +23,15 @@ sheetname: "Sheet1"
 Genotype: "CISD2 KO_EV"
 Dose: "100"
 ID: "20220505_EV_2"
+=======
+  baseline_start_time: 70
+  baseline_end_time: 90
+  osc_start_time: 374
+  osc_end_time: 434
+# write null if you want to execute the script for all data files in your path
+filename: "WT_LINK_3.nd2 - C=0_raw_F_over_F0.xlsx"
+sheetname: "FF0_resp"
+Genotype: "WT_LINK"
+Dose: "IO"
+ID: "20220331_WT_LINK_3"
+>>>>>>> homebranch

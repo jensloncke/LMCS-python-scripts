@@ -87,7 +87,7 @@ def quantify(data: pd.DataFrame, df: pd.DataFrame, filename):
     for column_name, column in basal.iteritems():
         results.loc["Basal", column_name] = column.median()
 
-    po.plot(px.line(oscillations))
+    #po.plot(px.line(oscillations))
 
     smoothed_df = pd.DataFrame(columns=oscillations.columns, index=oscillations.index)
 
@@ -119,7 +119,7 @@ def quantify(data: pd.DataFrame, df: pd.DataFrame, filename):
         else:
             results.loc["ID", column_name] = CONFIG["ID"]
     results.loc["Osc_cells"] = results.loc["Osc_cells"].sum() / len(results.loc["Osc_cells"])
-    po.plot(px.line(smoothed_df))
+    #po.plot(px.line(smoothed_df))
     return results
 
 
@@ -129,14 +129,18 @@ def find_median_cell(df: pd.DataFrame):
     return median_cell_idx
 
 
-def extract_median_cell_from_data(df: pd.DataFrame, median_cell_idx):
+def extract_traces_from_data(df: pd.DataFrame, median_cell_idx):
+    traces_slice = df.loc[CONFIG["constants"]["osc_start_time"]-20:CONFIG["constants"]["osc_end_time"]]
     median_trace_slice = df[median_cell_idx].loc[CONFIG["constants"]["osc_start_time"]-20:CONFIG["constants"]["osc_end_time"]]
     median_trace_slice = median_trace_slice.to_frame()
+    traces_slice.insert(0, "Genotype", CONFIG["Genotype"])
+    traces_slice.insert(1, "ID", CONFIG["ID"])
+    traces_slice.insert(2, "Dose", CONFIG["Dose"])
     median_trace_slice.insert(1, "Genotype", CONFIG["Genotype"])
     median_trace_slice.insert(2, "ID", CONFIG["ID"])
     median_trace_slice.insert(3, "Dose", CONFIG["Dose"])
     median_trace_slice.rename(columns={median_trace_slice.columns[0]: "Mean"}, inplace = True)
-    return median_trace_slice
+    return traces_slice, median_trace_slice
 
 
 def extract_traces_from_data(df: pd.DataFrame):
@@ -159,8 +163,8 @@ def main():
 
     path_data = CONFIG["paths"]["data"]
     path_osc = CONFIG["paths"]["osc"]
-    path_median = os.path.join(path_osc, "Median_trace")
-    os.makedirs(path_median, exist_ok=True)
+    path_traces = os.path.join(path_osc, "Sliced_traces")
+    os.makedirs(path_traces, exist_ok=True)
 
     if CONFIG["filename"] is None:
         file_list = [filename for filename in os.listdir(path_data)
@@ -171,24 +175,18 @@ def main():
             data = set_index(df)
             dataframe = data.copy()
             df = substract_baseline(data, CONFIG["constants"]["baseline_start_time"], CONFIG["constants"]["baseline_end_time"])
-
             result = quantify(dataframe, df, filename)
-
             median_cell_idx = find_median_cell(result)
-            median_trace = extract_median_cell_from_data(dataframe, median_cell_idx)
-            traces = extract_traces_from_data(dataframe)
-
-
-            save_name = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_quantified.csv"
-            save_name_yaml = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_parameters.yml"
-            save_name_median_trace = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_median_trace.csv"
+            traces, median_trace = extract_traces_from_data(dataframe, median_cell_idx)
+            save_name = filename[:-5] + "_" + CONFIG["Dose"] + "_quantified.csv"
+            save_name_yaml = filename[:-5] + "_" + CONFIG["Dose"] + "_parameters.yml"
+            save_name_median_trace = filename[:-5] + "_" + CONFIG["Dose"] + "_median_trace.csv"
             save_name_traces = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_traces.csv"
-            save_name_plot = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_median_trace.html"
+            save_name_plot = filename[:-5] + "_" + CONFIG["Dose"] + "_median_trace.html"
             result.to_csv(path_osc / save_name, sep=";", decimal=".")
-            median_trace.to_csv(os.path.join(path_median, save_name_median_trace), sep=";", decimal=".")
-            traces.to_csv(os.path.join(path_median, save_name_traces), sep=";", decimal=".")
-
-            plot_median_trace(median_trace.iloc[:, [0]], save_name_plot, path_median)
+            traces.to_csv(os.path.join(path_traces, save_name_traces), sep=";", decimal=".")
+            median_trace.to_csv(os.path.join(path_traces, save_name_median_trace), sep=";", decimal=".")
+            plot_median_trace(median_trace.iloc[:, [0]], save_name_plot, path_traces)
             with open(path_osc / save_name_yaml,
                       'w') as file:  # with zorgt er voor dat file.close niet meer nodig is na with block
                 yaml.dump(CONFIG["constants"], file, sort_keys=False)
@@ -203,18 +201,16 @@ def main():
         result = quantify(dataframe, df, CONFIG["filename"])
 
         median_cell_idx = find_median_cell(result)
-        median_trace = extract_median_cell_from_data(dataframe, median_cell_idx)
-        traces = extract_traces_from_data(dataframe)
-
+        traces, median_trace = extract_traces_from_data(dataframe, median_cell_idx)
         save_name = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_quantified.csv"
         save_name_yaml = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_parameters.yml"
         save_name_median_trace = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_median_trace.csv"
         save_name_traces = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_traces.csv"
         save_name_plot = CONFIG["filename"][:-5] + "_" + CONFIG["Dose"] + "_median_trace.html"
         result.to_csv(path_osc / save_name, sep=";", decimal=".")
-        median_trace.to_csv(os.path.join(path_median, save_name_median_trace), sep=";", decimal=".")
-        traces.to_csv(os.path.join(path_median, save_name_traces), sep=";", decimal=".")
-        plot_median_trace(median_trace.iloc[:, [0]], save_name_plot, path_median)
+        traces.to_csv(os.path.join(path_traces, save_name_traces), sep=";", decimal=".")
+        median_trace.to_csv(os.path.join(path_traces, save_name_median_trace), sep=";", decimal=".")
+        plot_median_trace(median_trace.iloc[:, [0]], save_name_plot, path_traces)
         with open(path_osc / save_name_yaml,
                   'w') as file:  # with zorgt er voor dat file.close niet meer nodig is na with block
             yaml.dump(CONFIG["constants"], file, sort_keys=False)

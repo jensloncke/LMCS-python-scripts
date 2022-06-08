@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import plotly.express as px
+import os
 from pathlib import Path
 from configuration.config import CONFIG
 
@@ -12,14 +13,12 @@ def filter_data(df):
 
 
 def plot_data(df, save_name, save_path):
-    fig = px.line(df, title = save_name[:-4])
+    fig = px.line(df.copy(), title = save_name[:-4])
     fig_save = os.path.join(save_path, save_name)
     fig.write_html(fig_save)
 
 
-if __name__ == "__main__":
-    import os
-
+def main():
     path_data = CONFIG["paths"]["data"]
     path_plots = CONFIG["paths"]["plots"]
     os.makedirs(CONFIG["paths"]["plots"], exist_ok=True)
@@ -28,34 +27,42 @@ if __name__ == "__main__":
                  if filename[-4:] == ".csv" and os.path.isfile(path_data / filename)]
     print(file_list)
 
-
     for filename in file_list:
-        df = pd.read_csv(path_data / filename, sep=",", decimal=".", index_col=0)
-        df = filter_data(df)
-        save_name_plot = filename[:-4] + "_raw_traces.html"
-        plot_data(df, save_name_plot, path_plots)
-        save_name_excel = filename[:-4] +"_raw.xlsx"
-        df.to_excel(path_plots / save_name_excel)
+        matches = ["340", "405"]
+        countermatches = ["380", "470"]
 
-    for filename in file_list:
-        if "340" in filename:
+        if any(match in filename for match in matches):
+            found_matches = [m for m in matches if m in filename]
+            matched = found_matches[0]
+            matched_index = matches.index(matched)
+            countermatched = countermatches[matched_index]
+
             if "C=0" in filename:
-                ca_bound = filter_data(pd.read_csv(path_data / filename, sep=",", decimal=".", index_col=0))
-                filename_380 = filename.replace("C=0_340", "C=1_380")
-                ca_free = filter_data(pd.read_csv(path_data / filename_380, sep=",", decimal=".", index_col=0))
-                ratio = ca_bound.div(ca_free)
-                save_name = filename[:-4] + "_raw_ratio.html"
-                save_name_plot = save_name.replace("340", "")
+                df = pd.read_csv(path_data / filename, sep=",", decimal=".", index_col=0)
+                df = filter_data(df)
+                save_name_plot = filename[:-4] + "_raw_traces.html"
+                plot_data(df, save_name_plot, path_plots)
+                save_name_excel = filename[:-4] + "_raw.xlsx"
+                df.to_excel(path_plots / save_name_excel)
+                numerator = filter_data(pd.read_csv(path_data / filename, sep=",", decimal=".", index_col=0))
+                filename_denominator = filename.replace("C=0_" + matched, "C=1_" + countermatched)
+                denominator = filter_data(pd.read_csv(path_data / filename_denominator, sep=",", decimal=".", index_col=0))
+                ratio = numerator.div(denominator)
+                save_name = filename[:-4] + "_ratio.html"
+                save_name_plot = save_name.replace("_"+matched, "")
                 plot_data(ratio, save_name_plot, path_plots)
-                save_name_excel = filename[:-4] + "_ratio.xlsx"
+                save_name_excel = save_name_plot.replace(".html", ".xlsx")
                 ratio.to_excel(path_plots / save_name_excel)
-            else:
-                ca_bound = filter_data(pd.read_csv(path_data / filename, sep=",", decimal=".", index_col=0))
-                filename_380 = filename.replace("340", "380")
-                ca_free = filter_data(pd.read_csv(path_data / filename_380, sep=",", decimal=".", index_col=0))
-                ratio = ca_bound.div(ca_free)
-                save_name = filename[:-4] + "_raw_ratio.html"
-                save_name_plot = save_name.replace("340", "")
-                plot_data(ratio, save_name_plot, path_plots)
-                save_name_excel = filename[:-4] + "_ratio.xlsx"
-                ratio.to_excel(path_plots / save_name_excel)
+
+        else:
+            df = pd.read_csv(path_data / filename, sep=",", decimal=".", index_col=0)
+            df = filter_data(df)
+            save_name_plot = filename[:-4] + "_raw_traces.html"
+            plot_data(df, save_name_plot, path_plots)
+            save_name_excel = filename[:-4] + "_raw.xlsx"
+            df.to_excel(path_plots / save_name_excel)
+
+
+if __name__ == "__main__":
+    main()
+
