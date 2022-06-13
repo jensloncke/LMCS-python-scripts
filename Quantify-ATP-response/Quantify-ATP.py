@@ -143,15 +143,6 @@ def extract_traces_from_data(df: pd.DataFrame, median_cell_idx):
     return traces_slice, median_trace_slice
 
 
-def extract_traces_from_data(df: pd.DataFrame):
-    trace = df.copy()
-    trace["Genotype"] =  CONFIG["Genotype"]
-    trace["ID"] = CONFIG["ID"]
-    trace["Dose"] = CONFIG["Dose"]
-    trace_slice = trace.loc[CONFIG["constants"]["osc_start_time"] - 20:CONFIG["constants"]["osc_end_time"]]
-    return trace_slice
-
-
 def plot_median_trace(df, save_name, save_path):
     fig = px.line(df, title = save_name[:-4])
     fig_save = os.path.join(save_path, save_name)
