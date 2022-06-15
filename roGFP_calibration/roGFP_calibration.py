@@ -8,7 +8,7 @@ import yaml
 
 
 def treat_filename(path, path_calibrated, path_plots, filename):
-    df = pd.read_excel(path / filename, sheet_name="Calibration", engine="openpyxl")
+    df = pd.read_excel(path / filename, sheet_name=CONFIG["sheetname"], engine="openpyxl")
     data = set_index(df)
     calibrated_df = calibrate_traces(data)
     save_name = filename[:-5] + "_calibrated.xlsx"
@@ -19,6 +19,22 @@ def treat_filename(path, path_calibrated, path_plots, filename):
               'w') as file:  # with zorgt er voor dat file.close niet meer nodig is na with block
         yaml.dump(CONFIG["constants"], file, sort_keys=False)
     plot_data(calibrated_df.loc[:CONFIG["constants"]["min_start_time"]], save_name_plot, path_plots)
+
+
+def set_index(df: pd.DataFrame):
+    matches = ["Time [s]", "", "time [s]", "Time", "time", "Time (s)", "Time (s) ", " Time (s)",
+               "time (s)", "Time(s)", "time(s)", "T", "t", "tijd", "Tijd", "tijd (s)", "Tijd (s)",
+               "tijd(s)", "Tijd(s)", "TIME", "TIJD", "tempo", "Tempo", "tempo (s)", "Tempo (s)",
+               "tíma", "tíma (s)", "Tíma (s)", "Tíma"]
+    if any(match in df.columns for match in matches):
+        colnames = df.columns.tolist()
+        match = ''.join(list(set(colnames) & set(matches)))
+        tijd = [col for col in df.columns if match in col]
+        df.set_index(tijd, inplace=True)
+        df.dropna(inplace=True)
+        return df.copy()
+    else:
+        return df.copy()
 
 
 def calibrate_traces(dataframe):
