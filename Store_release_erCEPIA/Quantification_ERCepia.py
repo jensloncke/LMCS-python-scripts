@@ -1,9 +1,7 @@
 import numpy as np
 import pandas as pd
-import yaml
-from pathlib import Path
 from configuration.config import CONFIG  #. = submap (submodule)
-
+import yaml
 
 def set_index(df: pd.DataFrame):
     matches = ["Time [s]", "time [s]", "Time", "time", "Time (s)", "time (s)", "Time(s)", "time(s)", "T", "t",
@@ -20,10 +18,14 @@ def set_index(df: pd.DataFrame):
         return df.copy()
 
 
-def calculate_response(column_values: pd.Series, baseline, start_time, end_time):
-    response_slice = column_values.loc[start_time:end_time]
-    peak_value = np.min(response_slice)
-    return peak_value - baseline
+def F_over_F0(data: pd.DataFrame, path_response):
+    FF0 = pd.DataFrame(index=data.index, columns= data.columns, dtype=np.float64)
+    for column_name, column in data.iteritems():
+        F0 = np.median(column[5:25])
+        FF0[column_name] = column / F0
+    save_name_FF0 = CONFIG["filename"][:-5] + "_FF0.csv"
+    FF0.to_csv(path_response / save_name_FF0, sep=";", decimal=".")
+    return FF0
 
 
 def calculate_baseline(values: pd.Series, start_time, end_time):
@@ -32,14 +34,28 @@ def calculate_baseline(values: pd.Series, start_time, end_time):
     return baseline
 
 
+def calculate_auc(shifted_values, start_time, end_time):
+    slice = shifted_values[start_time:end_time]
+    return np.trapz(y=slice)
+
+
+def calculate_response(column_values: pd.Series, baseline, start_time, end_time):
+    response_slice = column_values.loc[start_time:end_time]
+    peak_value = np.min(response_slice)
+    return peak_value - baseline
+
+
 def quantify_responses(df: pd.DataFrame):
-    results = pd.DataFrame(index=["Response"],
+    results = pd.DataFrame(index=["Amplitude", "AUC"],
                            columns=df.columns, dtype=np.float64)
     for column_name, column in df.iteritems():
         baseline_response = calculate_baseline(column, CONFIG["constants"]["baseline_start_time"],
                                                CONFIG["constants"]["baseline_end_time"])
-        results.loc["Response", column_name] = calculate_response(column, baseline_response, CONFIG["constants"]["response_start_time"]
-                                                                  , CONFIG["constants"]["response_end_time"])
+        results.loc["Amplitude", column_name] = abs(calculate_response(column, baseline_response, CONFIG["constants"]["response_start_time"]
+                                                                  , CONFIG["constants"]["response_end_time"]))
+        shifted_values = column - baseline_response
+        results.loc["AUC", column_name] = abs(calculate_auc(shifted_values, CONFIG["constants"]["response_start_time"],
+                            CONFIG["constants"]["response_end_time"]))
     return results
 
 
@@ -60,7 +76,8 @@ def main():
                            engine='openpyxl')
     df.dropna(inplace=True)
     data = set_index(df)
-    result = quantify_responses(data)
+    FF0 = F_over_F0(data, path_response)
+    result = quantify_responses(FF0)
     save_name = CONFIG["filename"][:-5] + "-quantified.csv"
     save_name_yaml = CONFIG["filename"][:-5] + "-parameters.yml"
     result.to_csv(path_response / save_name, sep=";", decimal=".")

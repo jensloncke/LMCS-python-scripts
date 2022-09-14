@@ -1,11 +1,11 @@
 paths:
-  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210520-HeLaCISD2-FURA-Bcl2\\Calibration"
-  calibrated: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210520-HeLaCISD2-FURA-Bcl2\\Calibration\\Calibrated"
-  plots: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20210520-HeLaCISD2-FURA-Bcl2\\Calibration\\Calibrated"
+  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20220616_HeLaCISD2_roGFP\\cyto\\Quantification"
+  calibrated: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20220616_HeLaCISD2_roGFP\\cyto\\Calibrated"
+  plots: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20220616_HeLaCISD2_roGFP\\cyto\\Calibrated"
 constants:
-  min_start_time: 217
-  min_end_time: 227
-  max_start_time: 298
-  max_end_time: 308
+  min_start_time: 945
+  min_end_time: 1410
+  max_start_time: 620
+  max_end_time: 945
 # write null if you want to execute the script for all data files in your path
-filename: "WT_EV_2.xlsx"
+filename: "KO_CTRL_1.nd2 - C=0_ratio.xlsx"
