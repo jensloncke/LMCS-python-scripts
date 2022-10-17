@@ -1,0 +1,13 @@
+paths:
+  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\FDSS\\20221005_HeLaCISD2IP3DR\\corrected\\RAW"
+  response: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\FDSS\\20221005_HeLaCISD2IP3DR\\Response"
+constants:
+  baseline_start_time_ATP: 0
+  baseline_end_time_ATP: 20
+  start_time_ATP: 30
+  end_time_ATP: 70
+  baseline_start_time_IP3: 180
+  baseline_end_time_IP3: 200
+  start_time_IP3: 210
+  end_time_IP3: 250
+  acquisition_time_interval: 1

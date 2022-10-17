@@ -24,7 +24,7 @@ def set_index(df: pd.DataFrame):
 
 
 def treat_filename(path, path_calibrated, path_plots, filename):
-    df = pd.read_excel(path / filename, sheet_name="Calibration", engine="openpyxl")
+    df = pd.read_excel(path / filename, sheet_name = CONFIG["sheet_name"], engine="openpyxl")
     data = set_index(df)
     calibrated_df = calibrate_traces(data)
     save_name = filename[:-5] + "_calibrated.xlsx"
@@ -34,7 +34,7 @@ def treat_filename(path, path_calibrated, path_plots, filename):
     with open(path_calibrated / save_name_yaml,
               'w') as file:  # with zorgt er voor dat file.close niet meer nodig is na with block
         yaml.dump(CONFIG["constants"], file, sort_keys=False)
-    plot_data(calibrated_df.loc[:CONFIG["constants"]["min_start_time"]], save_name_plot, path_plots)
+    plot_data(calibrated_df, save_name_plot, path_plots)
 
 
 def calibrate_traces(dataframe):

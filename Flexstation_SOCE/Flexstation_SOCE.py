@@ -54,7 +54,7 @@ def calculate_rate(column_values: pd.Series, start, end):
     i = 0
 
     while i < len(smoothed)-1:
-        rate_value = (smoothed[i+1] - smoothed[i]) / 3
+        rate_value = (smoothed[i+1] - smoothed[i]) / CONFIG["constants"]["acquisition_time_interval"]
         if rate_value > 0.004:
             rate_list.append(rate_value)
             i += 1
@@ -126,7 +126,7 @@ if __name__ == "__main__":
     path_response = CONFIG["paths"]["response"]
 
     file_list = [filename for filename in os.listdir(path_analysis)
-                 if filename[-4:] == ".txt" and os.path.isfile(path_analysis / filename)]
+                 if filename[-4:] == ".csv" and os.path.isfile(path_analysis / filename)]
     print(file_list)
 
     for filename in file_list:

@@ -1,12 +1,13 @@
 paths:
-  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\SOCE flexstation\\20220208_SOCE_u251_shSKIP"
-  response: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\SOCE flexstation\\20220208_SOCE_u251_shSKIP\\Response"
+  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\FDSS\\20220622_HeLaCISD2_test_magFluo-4_IP3_doseresponse\\F_over_F0"
+  response: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\FDSS\\20220622_HeLaCISD2_test_magFluo-4_IP3_doseresponse\\Response"
 constants:
-  baseline_start_time_TG: 60
-  baseline_end_time_TG: 80
-  start_time_TG: 95
-  end_time_TG: 395
-  baseline_start_time_SOCE: 365
-  baseline_end_time_SOCE: 395
-  start_time_SOCE: 395
-  end_time_SOCE: 515
+  baseline_start_time_TG: 0
+  baseline_end_time_TG: 20
+  start_time_TG: 30
+  end_time_TG: 70
+  baseline_start_time_SOCE: 180
+  baseline_end_time_SOCE: 200
+  start_time_SOCE: 200
+  end_time_SOCE: 240
+  acquisition_time_interval: 1

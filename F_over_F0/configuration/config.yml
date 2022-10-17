@@ -1,9 +1,9 @@
 paths:
-  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20220617_HeLaCISD2_Bcl2_mtCEPIA\\Traces"
-  F0: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20220617_HeLaCISD2_Bcl2_mtCEPIA\\F_over_F0"
+  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20221006_HeLaCISD2_mtCEPIA_mutants\\Quantification"
+  F0: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20221006_HeLaCISD2_mtCEPIA_mutants\\F_over_F0"
 constants:
-  F0_start_time: 55
-  F0_end_time: 75
+  F0_start_time: 80
+  F0_end_time: 100
 # write null if you want to execute the script for all data files in your path
-filename: "WT_EV_3.nd2 - C=0_raw.xlsx"
+filename: "EV_3.nd2 - C=1_mtCEPIA_raw.xlsx"
 sheetname: "Sheet1"

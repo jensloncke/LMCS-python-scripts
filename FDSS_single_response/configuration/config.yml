@@ -1,0 +1,11 @@
+paths:
+  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\FDSS\\20221005_HeLaCISD2_ATP_DR\\Shadingcorrection\\RAW"
+  response: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\FDSS\\20221005_HeLaCISD2_ATP_DR\\Response"
+constants:
+  baseline_start_time: 30
+  baseline_end_time: 80
+  start_time: 89
+  end_time: 689
+  acquisition_time_interval: 1
+  rate_duration: 13
+  
