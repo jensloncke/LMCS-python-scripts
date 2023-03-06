@@ -31,3 +31,5 @@ To run these scripts:
 ![image](https://user-images.githubusercontent.com/38840043/223137580-6c7cd26b-b83f-4a0a-a7c5-ff67f7b7e473.png)
 * Add the required packages through the install button in the virtual environment.
 
+* Each script consists of a configuration folder and a .py script. Fill in your parameters in the config.yml file and run the .py script via PyCharm.
+![image](https://user-images.githubusercontent.com/38840043/223139699-c21eef37-5b7d-439f-a0cb-cf62fd281b3d.png)
