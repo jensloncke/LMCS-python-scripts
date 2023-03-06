@@ -2,4 +2,4 @@
 Collection of data analysis Python scripts for data generated at the Laboratory of Cellular &amp; Molecular Signaling, KU Leuven.
 
 ## Purpose of this repository
-This repository contains a **collection of scripts** 
+This repository contains a **collection of scripts** to automate quantitative data analysis
