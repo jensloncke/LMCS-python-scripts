@@ -142,7 +142,7 @@ def main():
     import os
 
     path_data = CONFIG["paths"]["data"]
-    path_osc = CONFIG["paths"]["osc"]
+    path_osc = CONFIG["paths"]["results"]
 
     if CONFIG["filename"] is None:
         file_list = [filename for filename in os.listdir(path_data)

@@ -56,7 +56,7 @@ def calculate_rate_ATP(column_values: pd.Series, start, end):
 
 def analyse_column_ATP(column_to_analyse: pd.Series, base_start, base_end, start, end):
     baseline_response = calculate_baseline(column_to_analyse, base_start, base_end)
-    basal = column_to_analyse.loc[2:22,].median()
+    basal = column_to_analyse.loc[2:12,].median()
     response = calculate_response(baseline_response, column_to_analyse, start, end)
     shifted_values_response = column_to_analyse - baseline_response
     AUC = calculate_auc(shifted_values_response, start, end)

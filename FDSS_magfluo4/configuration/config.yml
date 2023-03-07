@@ -1,6 +1,6 @@
 paths:
-  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\FDSS\\20221005_HeLaCISD2IP3DR\\corrected\\RAW"
-  response: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\FDSS\\20221005_HeLaCISD2IP3DR\\Response"
+  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\FDSS\\20220622_HeLaCISD2_test_magFluo-4_IP3_doseresponse\\RAW"
+  response: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\FDSS\\20220622_HeLaCISD2_test_magFluo-4_IP3_doseresponse\\Response"
 constants:
   baseline_start_time_ATP: 0
   baseline_end_time_ATP: 20

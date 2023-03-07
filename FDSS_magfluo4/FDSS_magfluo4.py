@@ -8,10 +8,11 @@ from configuration.config import CONFIG
 
 
 def read_and_clean_df(path, file):
-    data_to_analyze = pd.read_csv(path / file, sep="\t", index_col=0, skiprows=8)
-    searchfor = ["Comment", "Type", "Time"]
-    data_to_analyze = data_to_analyze[data_to_analyze["No."].str.contains("|".join(searchfor)) == False]
-    data_to_analyze = data_to_analyze.apply(pd.to_numeric).rename(columns={"No.": "Time (s)"})
+    data_to_analyze = pd.read_csv(path / file, sep="\t")
+    #data_to_analyze = pd.read_csv(path / file, sep="\t", index_col=0, skiprows=8)
+    #searchfor = ["Comment", "Type", "Time"]
+    #data_to_analyze = data_to_analyze[data_to_analyze["No."].str.contains("|".join(searchfor)) == False]
+    #data_to_analyze = data_to_analyze.apply(pd.to_numeric).rename(columns={"No.": "Time (s)"})
     data_to_analyze.set_index(data_to_analyze["Time (s)"]/1000, inplace=True)
     data_to_analyze.drop('Time (s)', axis=1, inplace=True)
     return data_to_analyze

@@ -1,11 +1,11 @@
 paths:
-  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\FDSS\\20221005_HeLaCISD2_ATP_DR\\Shadingcorrection\\RAW"
-  response: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\FDSS\\20221005_HeLaCISD2_ATP_DR\\Response"
+  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\FDSS\\20221020_iPSC_ATP_1.5Ca_DR\\with\\RAW"
+  response: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\FDSS\\20221020_iPSC_ATP_1.5Ca_DR\\Response"
 constants:
-  baseline_start_time: 30
-  baseline_end_time: 80
-  start_time: 89
-  end_time: 689
+  baseline_start_time: 10
+  baseline_end_time: 30
+  start_time: 31
+  end_time: 631
   acquisition_time_interval: 1
   rate_duration: 13
   
