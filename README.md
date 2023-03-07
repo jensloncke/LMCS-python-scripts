@@ -16,7 +16,7 @@ To run these scripts:
 		*conda activate myenv
 		*conda install pandas
 * Set the Python interpreter to the newly created conda environment:
-* 
+
 ![image](https://user-images.githubusercontent.com/38840043/223134708-b864418a-0459-40a6-8d7b-2458bde45aaa.png)
 
 ![image](https://user-images.githubusercontent.com/38840043/223135019-b2e98c0b-d174-40d3-89b0-ac920b6bdf4e.png)
