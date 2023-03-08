@@ -28,4 +28,4 @@ The processed data will be exported as .xlsx files and interactive .html plots.
   * **F0_start_time**: Start times of baseline periods for the basal fluorescence.
   * **F0_end_time**: End times of baseline periods for the basal fluorescence.
   
-### Run Extract multi_measure data.py
+### Run data_extraction_multi_measure_imageJ.py
