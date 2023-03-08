@@ -20,11 +20,16 @@ The analyzed data will be exported as .csv files and interactive .html plots.
 
 * **paths**
 	* **data**: path to your processed data including a time column and cells in columns.
-	* **F0**: path to your desired output location.
+	* **response**: path to your desired output location.
 * **constants**
-  * **F0_start_time**: Start times of baseline periods for the basal fluorescence.
-  * **F0_end_time**: End times of baseline periods for the basal fluorescence.
-* **filename**: filename of excel file to be analyzed within quotations. Leave blank to process all files simultaneously. Format: "filename.xlsx".
-* **sheetname**: name of excel sheet to be analyzed within quotations. Format: "Sheet1"
+  * **baseline_start_time_ATP**: Start time of baseline period before ATP addition.
+  * **baseline_end_time_ATP**: End time of baseline period before ATP addition.
+  * **start_time_ATP**: Start time of Mg-ATP induced SERCA response.
+  * **end_time_ATP**: End time of Mg-ATP induced SERCA response.
+  * **baseline_start_time_IP3**: Start time of baseline period before IP3 addition.
+  * **baseline_end_time_IP3**: End time of baseline period before IP3 addition.
+  * **start_time_IP3**: Start time of IP3-mediated response.
+  * **end_time_IP3**: End time of IP3-mediated response.
+  * **acquisition_time_interval**: Time (in seconds) between acquisitions.
 
 ### Run FDSS_magfluo4.py
