@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import yaml
 import plotly.express as px
-import plotly.offline as po
 from scipy.ndimage import gaussian_filter1d
 from configuration.config import CONFIG
 
@@ -134,7 +133,7 @@ def save_data(result: pd.DataFrame, df: pd.DataFrame, path, filename):
     result.to_csv(path / save_name_response, sep=";")
     df.to_csv(path / save_name_data, sep=";")
     with open(path / "config-parameters.yml",
-              'w') as file:  # with zorgt er voor dat file.close niet meer nodig is na with block
+              'w') as file:
         yaml.dump(CONFIG["constants"], file, sort_keys=False)
 
 
@@ -145,7 +144,6 @@ if __name__ == "__main__":
 
     file_list = [filename for filename in os.listdir(path_analysis)
                  if filename[-4:] == ".TXT" and os.path.isfile(path_analysis / filename)]
-    print(file_list)
 
     for filename in file_list:
         df = read_and_clean_df(path_analysis, filename)
