@@ -20,7 +20,7 @@ The processed data will be exported as .xlsx files and interactive .html plots.
 ### Fill in configuration.yml
 
 * **paths**
-	* **raw_acquisitions: path to raw .nd2 files
+	* **raw_acquisitions**: path to raw .nd2 files (leave blank if you do not want to include time information)
 	* **data**: path to multi measured data in ImageJ
 	* **results**: path to your desired output location.
 * **normalize_fluorescence**: Boolean value (True or False). Put True if you want to compute F over F0.
@@ -28,4 +28,4 @@ The processed data will be exported as .xlsx files and interactive .html plots.
   * **F0_start_time**: Start times of baseline periods for the basal fluorescence.
   * **F0_end_time**: End times of baseline periods for the basal fluorescence.
   
-### Extract multi_measure data.py
+### Run Extract multi_measure data.py
