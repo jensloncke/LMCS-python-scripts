@@ -1,7 +1,7 @@
 # FURA-2 multiple responses
 
 ## Purpose of this script
-This folder contains a Python script that semi-automates **quantification of amplitudes, area under curves and oscillations** of FURA-2 data with one or more phases of response. Numeric data is acquired through one of the ImageJ macros on: https://github.com/jensloncke/ImageJ_macros and further processed with the ImageJ_data_processing script on:
+This folder contains a Python script that semi-automates **quantification of amplitudes, area under curves and oscillations** of FURA-2 data with one or more phases of response. Numeric data is acquired through one of the ImageJ macros on: https://github.com/jensloncke/ImageJ_macros and further processed with the ImageJ_data_processing script on: https://github.com/jensloncke/LMCS-python-scripts/tree/main/Extract%20multi_measure%20data
 The script will segment your data in the responses you indicate, and will subtract baseline, yield (time of) maximal and first amplitudes, area under curve of responses, frequencies of oscillations in Gaussian smoothed traces, and fraction of responding cells for each indicated response phase.
 
 ## Dependencies 
@@ -11,6 +11,7 @@ The script will segment your data in the responses you indicate, and will subtra
 * pathlib
 * plotly
 * yaml or PyYaml
+* openpyxl
 
 ## How to operate this script
 
