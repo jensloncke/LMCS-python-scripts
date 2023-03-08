@@ -4,6 +4,6 @@ paths:
 constants:
   F0_start_time: 5
   F0_end_time: 25
-# write null if you want to execute the script for all data files in your path
+# write nothing if you want to execute the script for all data files in your path
 filename:
 sheetname: "Sheet1"

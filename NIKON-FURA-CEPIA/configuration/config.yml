@@ -1,3 +1,8 @@
 paths:
-  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20230213 HeLa CISD2 Bcl-2 OE\\Multi_measure"
-  plots: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20230213 HeLa CISD2 Bcl-2 OE\\Traces"
+  raw_acquisitions: "C:\\Users\\u0132307\\OneDrive - KU Leuven\\NIKON\\20230203_HeLaCISD2_linkers"
+  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20230203 HeLa CISD2 mtCEPIA3 linkers\\Multi_measure"
+  results: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20230203 HeLa CISD2 mtCEPIA3 linkers\\Traces_test"
+normalize_fluorescence: True
+constants:
+  F0_start_time: 2
+  F0_end_time: 25
