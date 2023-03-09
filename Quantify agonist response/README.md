@@ -1,7 +1,10 @@
 # Quantify agonist response
 
 ## Purpose of this script
-This folder contains a Python script that semi-automates **quantification of basal fluorescence, amplitudes, area under curves, fraction of responding cells and oscillations** of timelapse data. Numeric data is acquired through one of the ImageJ macros on: https://github.com/jensloncke/ImageJ_macros and further processed with the ImageJ_data_processing script on: https://github.com/jensloncke/LMCS-python-scripts/tree/main/Extract%20multi_measure%20data
+This folder contains a Python script that semi-automates **quantification of basal fluorescence, amplitudes, area under curves, fraction of responding cells and oscillations** of timelapse data. 
+Numeric data is acquired through one of the ImageJ macros on: https://github.com/jensloncke/ImageJ_macros 
+and further processed with the ImageJ_data_processing script on: https://github.com/jensloncke/LMCS-python-scripts/tree/main/Extract%20multi_measure%20data
+
 The script will subtract baseline, yield basal fluorescence, (time of) maximal and first amplitudes, area under curve of responses, frequencies of oscillations in Gaussian smoothed traces, and fraction of responding cells for each indicated response phase.
 
 ## Dependencies 
