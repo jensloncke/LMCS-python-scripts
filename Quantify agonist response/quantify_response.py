@@ -153,7 +153,7 @@ def main():
     import os
 
     path_data = CONFIG["paths"]["data"]
-    path_osc = CONFIG["paths"]["osc"]
+    path_osc = CONFIG["paths"]["results"]
     path_traces = os.path.join(path_osc, "Sliced_traces")
     os.makedirs(path_traces, exist_ok=True)
 
