@@ -1,4 +1,4 @@
-# F_over_F0
+# F over F0
 
 ## Purpose of this script
 This folder contains a Python script that semi-automates **normalization of fluorescence** of fluorescence time series. Numeric data is acquired through one of the ImageJ macros on: https://github.com/jensloncke/ImageJ_macros and further processed with the ImageJ_data_processing script on: https://github.com/jensloncke/LMCS-python-scripts/tree/main/Extract%20multi_measure%20data
