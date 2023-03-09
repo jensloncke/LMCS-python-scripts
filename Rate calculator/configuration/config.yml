@@ -4,5 +4,5 @@ paths:
 constants:
   start_time: 923
   end_time: 1043
-  acquisition_rate: 2
+  acquisition_time_interval: 2
 filename: "KO_5.nd2 - C=0_340_ratio.xlsx"

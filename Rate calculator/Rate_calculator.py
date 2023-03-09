@@ -2,8 +2,6 @@ import pandas as pd
 import numpy as np
 import yaml
 import os
-import plotly.express as px
-import plotly.offline as po
 from scipy.ndimage import gaussian_filter1d
 from configuration.config import CONFIG
 
@@ -53,14 +51,17 @@ def calculate_rate(column_values: pd.Series, start, end):
 
     while i < len(smoothed)-1:
         rate_value = (smoothed[i+1] - smoothed[i]) / CONFIG["constants"]["acquisition_rate"]
+
         if rate_value > 0:
             rate_list.append(rate_value)
             i += 1
+
         else:
             i += 1
 
     if not rate_list:
         return 0
+
     else:
         rate = np.max(np.array(rate_list))
         return rate
@@ -71,7 +72,7 @@ def save_data(result: pd.DataFrame, df: pd.DataFrame, path, filename):
     save_name_yaml = filename[:-4] + "_" + "_rate_parameters.yml"
     result.to_csv(path / save_name, sep=";")
     with open(path / save_name_yaml,
-              'w') as file:  # with zorgt er voor dat file.close niet meer nodig is na with block
+              'w') as file:
         yaml.dump(CONFIG["constants"], file, sort_keys=False)
 
 
