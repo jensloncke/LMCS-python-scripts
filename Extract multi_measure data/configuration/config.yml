@@ -1,8 +1,8 @@
 paths:
-  raw_acquisitions: "C:\\Users\\u0132307\\OneDrive - KU Leuven\\NIKON\\20230203_HeLaCISD2_linkers"
-  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20230203 HeLa CISD2 mtCEPIA3 linkers\\Multi_measure"
-  results: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20230203 HeLa CISD2 mtCEPIA3 linkers\\Traces_test"
-normalize_fluorescence: True
+  raw_acquisitions: "J:\\GBW-0051_IP3 Group\\Jens\\20230313_workshop\\FURA mCherry"
+  data: "J:\\GBW-0051_IP3 Group\\Jens\\20230313_workshop\\FURA mCherry\\Multi_measure"
+  results: "J:\\GBW-0051_IP3 Group\\Jens\\20230313_workshop\\FURA mCherry\\Traces"
+normalize_fluorescence: False
 constants:
   F0_start_time: 2
   F0_end_time: 25

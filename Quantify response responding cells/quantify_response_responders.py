@@ -91,8 +91,6 @@ def quantify(data: pd.DataFrame, df: pd.DataFrame, filename):
 
     smoothed_df = pd.DataFrame(columns=oscillations.columns, index=oscillations.index)
 
-
-
     for column_name, column in oscillations.iteritems():
         smoothed_df[column_name] = smooth_column(column, CONFIG["constants"]["smoothing_constant"])
         max_idx = detect_local_max_idx(smoothed_df[column_name], oscillations[column_name])
@@ -118,7 +116,10 @@ def quantify(data: pd.DataFrame, df: pd.DataFrame, filename):
             results.loc["ID", column_name] = CONFIG["ID"] + filename.split("C=2")[1].split("_individual")[0]
         else:
             results.loc["ID", column_name] = CONFIG["ID"]
+
+
     results.loc["Osc_cells"] = results.loc["Osc_cells"].sum() / len(results.loc["Osc_cells"])
+    results = results.drop([col for col in results.columns if results[col].loc["STD oscillations"] < CONFIG["constants"]["stdev_non-oscillating"]], axis=1)
     po.plot(px.line(smoothed_df))
     return results
 
