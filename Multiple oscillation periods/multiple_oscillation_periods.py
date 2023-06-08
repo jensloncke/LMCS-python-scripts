@@ -25,7 +25,7 @@ def set_index(df: pd.DataFrame):
         return df.copy()
 
 
-def substract_baseline(df: pd.DataFrame, t_start, t_end):
+def subtract_baseline(df: pd.DataFrame, t_start, t_end):
     for column_name, column in df.iteritems():
         baseline_slice = column.loc[t_start:t_end,]
         baseline = baseline_slice.median()
@@ -66,7 +66,7 @@ def extract_peak_values(column, max_idx):
 
 
 def extract_frequencies(df: pd.DataFrame):
-    df_baseline = substract_baseline(df, CONFIG["constants"]["baseline_start"], CONFIG["constants"]["baseline_end"])
+    df_baseline = subtract_baseline(df, CONFIG["constants"]["baseline_start"], CONFIG["constants"]["baseline_end"])
     po.plot(px.line(df_baseline))
     po.plot(px.line(smooth_df(df_baseline)))
     conc_vals = CONFIG["constants"]["concentrations"]

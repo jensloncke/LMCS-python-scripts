@@ -1,8 +1,8 @@
 paths:
-  raw_acquisitions: "J:\\GBW-0051_IP3 Group\\Jens\\20230313_workshop\\FURA mCherry"
-  data: "J:\\GBW-0051_IP3 Group\\Jens\\20230313_workshop\\FURA mCherry\\Multi_measure"
-  results: "J:\\GBW-0051_IP3 Group\\Jens\\20230313_workshop\\FURA mCherry\\Traces"
-normalize_fluorescence: False
+  raw_acquisitions: "C:\\Users\\u0132307\\OneDrive - KU Leuven\\NIKON\\20230503 CN CISD2 glutamate"
+  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20230503 CN glutamate\\Multi_measure_segmented"
+  results: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20230503 CN glutamate\\Traces_segmented"
+normalize_fluorescence: True
 constants:
   F0_start_time: 2
   F0_end_time: 25

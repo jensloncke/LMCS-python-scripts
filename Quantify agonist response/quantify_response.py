@@ -87,7 +87,7 @@ def quantify(data: pd.DataFrame, df: pd.DataFrame, filename):
     for column_name, column in basal.iteritems():
         results.loc["Basal", column_name] = column.median()
 
-    po.plot(px.line(oscillations))
+    #po.plot(px.line(oscillations))
 
     smoothed_df = pd.DataFrame(columns=oscillations.columns, index=oscillations.index)
 
@@ -119,7 +119,7 @@ def quantify(data: pd.DataFrame, df: pd.DataFrame, filename):
         else:
             results.loc["ID", column_name] = CONFIG["ID"]
     results.loc["Osc_cells"] = results.loc["Osc_cells"].sum() / len(results.loc["Osc_cells"])
-    po.plot(px.line(smoothed_df))
+    #po.plot(px.line(smoothed_df))
     return results
 
 
