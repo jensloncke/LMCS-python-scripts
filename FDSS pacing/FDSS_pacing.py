@@ -94,7 +94,7 @@ def analyse_field(df: pd.DataFrame, path, filename):
     for pacing, start, end in zip(pacing_vals, start_times, end_times):
         slice = df.loc[start:end, :]
         results = pd.DataFrame(columns=slice.columns, index=[f"osc_{pacing}", f"amp_avg_{pacing}", f"amp_max_{pacing}",
-                                                             f"interval{pacing}"],dtype=np.float64)
+                                                             f"interval (s)_{pacing}"],dtype=np.float64)
         normalized_data = pd.DataFrame(columns=slice.columns, index=slice.index)
 
         for column_name, column in slice.iteritems():
@@ -109,7 +109,7 @@ def analyse_field(df: pd.DataFrame, path, filename):
             results.loc[f"amp_avg_{pacing}", column_name] = avg_peak
             results.loc[f"amp_max_{pacing}", column_name] = max_peak
             results.loc[f"osc_{pacing}", column_name] = len(max_idx)
-        results.loc[f"interval(s)_{pacing}"] = f"{start} - {end}"
+            results.loc[f"interval (s)_{pacing}", column_name] = f"{start} - {end}"
         list_df_results.append(results)
         fig = px.line(normalized_data, title=f"{pacing}: {start}s-{end}s").update_layout(xaxis_title="Time (s)", yaxis_title="F/F0")
         fig_save = os.path.join(path, filename[:-4] + f"_{pacing}_F_over_F0.html")
