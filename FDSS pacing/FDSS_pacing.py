@@ -20,9 +20,20 @@ def strip_rows(dataframe):
 
 
 def read_and_clean_df(path, file):
-    data_to_analyze = pd.read_csv(path / file, index_col=0, sep="\t")
-    stripped_data = strip_rows(data_to_analyze)
-    return stripped_data
+
+    try:
+        data_to_analyze = pd.read_csv(path / file, index_col=0, sep="\t")
+        stripped_data = strip_rows(data_to_analyze)
+        return stripped_data
+    except:
+        data_to_analyze = pd.read_csv(path / file, skiprows=10, sep="\t")
+        data_to_analyze = data_to_analyze.iloc[: , 1:]
+        data_to_analyze = data_to_analyze.set_index(["No."])
+        data_to_analyze = data_to_analyze.apply(pd.to_numeric, errors='coerce')
+        rows_to_exclude = ["Comment", "Type", "Time[ms]"]
+        stripped_dataframe = data_to_analyze.drop(rows_to_exclude)
+        stripped_dataframe = stripped_dataframe.rename(index=lambda x: int(x) / 1000)
+        return stripped_dataframe
 
 
 def normalize_fluorescence(trace: pd.Series):
