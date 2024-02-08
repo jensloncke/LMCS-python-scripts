@@ -1,9 +1,9 @@
 paths:
-  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20230216 HeLa CISD2 linkers\\Traces"
-  F0: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20230216 HeLa CISD2 linkers\\F_over_F0"
+  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\Rita"
+  F0: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\Rita\\F_over_F0"
 constants:
-  F0_start_time: 68
-  F0_end_time: 88
+  F0_start_time: 0
+  F0_end_time: 10
 # write nothing if you want to execute the script for all data files in your path
-filename: "WT_TETHER_3.nd2 - C=0.xlsx"
-sheetname: "Sheet1"
+filename: "2D OE SCR003.nd2 - C=0.xlsx"
+sheetname: "2D OE SCR003.nd2 - C=0"

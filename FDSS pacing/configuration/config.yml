@@ -1,10 +1,10 @@
 paths:
-  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\FDSS"
-  response: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\FDSS\\Response"
+  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\FDSS\\11302023_RL_03\\RAW"
+  response: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\FDSS\\11302023_RL_03\\Response"
 constants:
   pacing: [1, 2, 3, 4]
-  pacing_start: [0, 60, 180, 240]
-  pacing_end: [60, 120, 240, 300]
-  smoothing_constant: 4
+  pacing_start: [19, 61, 103, 145]
+  pacing_end: [39, 81, 123, 165]
+  smoothing_constant: 1
   peak_threshold: 0.01
   

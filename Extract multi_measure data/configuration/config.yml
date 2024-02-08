@@ -1,7 +1,7 @@
 paths:
-  raw_acquisitions: "C:\\Users\\u0132307\\OneDrive - KU Leuven\\NIKON\\20230503 CN CISD2 glutamate"
-  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20230503 CN glutamate\\Multi_measure_segmented"
-  results: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20230503 CN glutamate\\Traces_segmented"
+  raw_acquisitions: "C:\\Users\\u0132307\\OneDrive - KU Leuven\\NIKON\\Wout"
+  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\Wout\\Multi_measure"
+  results: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\Wout\\Traces"
 normalize_fluorescence: True
 constants:
   F0_start_time: 2

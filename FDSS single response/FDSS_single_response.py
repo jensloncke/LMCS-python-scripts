@@ -19,7 +19,7 @@ def read_and_clean_df(path, file):
 
 def normalize_fluorescence(data):
     for column_name, column in data.iteritems():
-        F0 = np.median(column.loc[CONFIG["constants"]["baseline_start_time"]:CONFIG["constants"]["baseline_start_time"]+20,].values)
+        F0 = np.median(column.loc[CONFIG["constants"]["baseline_start_time"]:CONFIG["constants"]["baseline_end_time"],].values)
         data[column_name] = data[column_name] / F0
     return data
 

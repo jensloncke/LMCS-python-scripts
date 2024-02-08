@@ -40,6 +40,7 @@ def normalize_fluorescence(trace: pd.Series):
     F_over_F0 = trace / np.min(trace)
     return F_over_F0
 
+
 def subtract_baseline(column: pd.Series):
     minimum = column.min()
     maximum = column.max()

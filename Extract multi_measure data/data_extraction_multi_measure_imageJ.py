@@ -3,6 +3,7 @@ import numpy as np
 import plotly.express as px
 import os
 import nd2reader
+from io import FileIO
 from pathlib import Path
 from configuration.config import CONFIG
 
@@ -38,7 +39,7 @@ def get_time(filename, df: pd.DataFrame):
 def extract_time_info(filename, df: pd.DataFrame):
     path_acq = CONFIG["paths"]["raw_acquisitions"]
     filename_nd2 = filename.split(" - C=")[0]
-    video = nd2reader.ND2Reader(path_acq / filename_nd2)
+    video = nd2reader.ND2Reader(FileIO(path_acq / filename_nd2))
     time_information = video.timesteps / 1000
     df_copy = df.copy()
     df_copy.insert(0, 'Time (s)', time_information)
