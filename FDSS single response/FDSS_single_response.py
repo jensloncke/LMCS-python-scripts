@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import yaml
 import plotly.express as px
-import plotly.offline as po
 from scipy.ndimage import gaussian_filter1d
 from configuration.config import CONFIG
 
@@ -17,6 +16,7 @@ def read_and_clean_df(path, file):
     data_to_analyze.drop('Time (s)', axis=1, inplace=True)
     return data_to_analyze
 
+
 def determine_skip_rows(path, filename):
     with open(path / filename, 'r') as f:
         lines = f.readlines()
@@ -25,9 +25,8 @@ def determine_skip_rows(path, filename):
                 return i + 1  # Add 1 to skip the empty line as well
 
 
-
 def normalize_fluorescence(data):
-    for column_name, column in data.iteritems():
+    for column_name, column in data.items():
         F0 = np.median(column.loc[CONFIG["constants"]["baseline_start_time"]:CONFIG["constants"]["baseline_end_time"],].values)
         data[column_name] = data[column_name] / F0
     return data
@@ -76,7 +75,7 @@ def analyse_column_ATP(column_to_analyse: pd.Series, base_start, base_end, start
 def analyse_data(df: pd.DataFrame):
     df_result = pd.DataFrame(columns=df.columns, index=["Basal", "Response", "AUC", "Rate"])
 
-    for column_name, column in df.iteritems():
+    for column_name, column in df.items():
         basal, response, AUC, rate = analyse_column_ATP(column, CONFIG["constants"]["baseline_start_time"],
                                              CONFIG["constants"]["baseline_end_time"],
                                              CONFIG["constants"]["start_time"],
