@@ -23,7 +23,7 @@ The script will calculate Maximum amplitude and area under the curve of single-c
 * **constants**
   * **start_time**: Start time of rate of rise.
   * **end_time**: End time of rate of rise.
-  * **acquisition_time_interval**: Time (in seconds) between acquisitions.
+  * **smoothing_constant**: Desired degree of smoothing of data
 * **filename**: filename of excel file to be analyzed within quotations. Leave blank to process all files simultaneously. Format: "filename.xlsx".
 
 ### Run Rate_calculator.py
