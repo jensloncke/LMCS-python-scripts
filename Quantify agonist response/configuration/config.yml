@@ -1,19 +1,19 @@
 paths:
-  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20231019 HeLa CISD2 Bcl2 mtCEPIA\\Traces"
-  results: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20231019 HeLa CISD2 Bcl2 mtCEPIA\\Results"
+  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20240530_Trex_Bcl2_CISD2\\Traces"
+  results: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20240530_Trex_Bcl2_CISD2\\Results"
 constants:
   smoothing_constant: 4
   stdev_non-oscillating: 0.03
-  peak_threshold: 0.03
-  basal_start_time: 5
+  peak_threshold: 0.05
+  basal_start_time: 2
   basal_end_time: 25
-  baseline_start_time: 130
-  baseline_end_time: 150
-  osc_start_time: 150
-  osc_end_time: 330
+  baseline_start_time: 105
+  baseline_end_time: 125
+  osc_start_time: 125
+  osc_end_time: 185
 # write null if you want to execute the script for all data files in your path
-filename: "mCherry_EV_4.nd2 - C=0.xlsx"
-sheetname: "FF0_resp"
+filename: "mCherry_CISD2_2.nd2 - ratio.xlsx"
+sheetname: "Cleaned"
 Genotype: "mCherry_CISD2"
-Dose: "2uM_ATP"
-ID: "20231019_mCHERRY_EV_4"
+Dose: "0.5_mM_caffeine"
+ID: "20240530_mCherry_CISD2_2"

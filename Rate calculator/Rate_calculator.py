@@ -3,6 +3,8 @@ import numpy as np
 import yaml
 import os
 from scipy.ndimage import gaussian_filter1d
+import plotly.express as px
+import plotly.offline as po
 from configuration.config import CONFIG
 
 
@@ -14,57 +16,47 @@ def read_and_clean_df(path_data, file):
 
 
 def set_index(df: pd.DataFrame):
-    matches = ["Time [s]", "", "time [s]", "Time", "time", "Time (s)", "Time (s) ", " Time (s)",
+    matches = ["Time [s]", "time [s]", "Time", "time", "Time (s)", "Time (s) ", " Time (s)",
                "time (s)", "Time(s)", "time(s)", "T", "t", "tijd", "Tijd", "tijd (s)", "Tijd (s)",
                "tijd(s)", "Tijd(s)", "TIME", "TIJD", "tempo", "Tempo", "tempo (s)", "Tempo (s)",
                "tíma", "tíma (s)", "Tíma (s)", "Tíma"]
-    if any(match in df.columns for match in matches):
-        colnames = df.columns.tolist()
-        match = ''.join(list(set(colnames) & set(matches)))
-        tijd = [col for col in df.columns if match in col]
+
+    tijd = next((col for col in df.columns if col in matches), None)
+
+    if tijd:
         df.set_index(tijd, inplace=True)
         df.dropna(inplace=True)
         return df.copy()
-    else:
-        return df.copy()
 
+    return df.copy()
 
 def analyse_data(df: pd.DataFrame):
     df_result = pd.DataFrame(columns=df.columns, index=["Rate"])
+    smoothed_data = df.loc[CONFIG["constants"]["start_time"]:CONFIG["constants"]["end_time"]].values
+    smoothed = pd.DataFrame(gaussian_filter1d(smoothed_data,
+                                              sigma=CONFIG["constants"]["smoothing_constant"] / 3,
+                                              mode="mirror"),
+                            columns=df.columns)
 
-    for column_name, column in df.iteritems():
+    fig = px.line(smoothed)
+    fig.show()
+
+    for column_name, column in smoothed.iteritems():
         rate = analyse_column(column, CONFIG["constants"]["start_time"],
-                                             CONFIG["constants"]["end_time"])
+                                             CONFIG["constants"]["end_time"], smoothed)
         df_result.loc["Rate", column_name] = rate
+
     return df_result
 
 
-def analyse_column(column_to_analyse: pd.Series, start, end):
-    rate = calculate_rate(column_to_analyse, start, end)
+def analyse_column(column_to_analyse: pd.Series, start, end, smoothed):
+    rate = calculate_rate(column_to_analyse, start, end, smoothed)
     return rate
 
 
-def calculate_rate(column_values: pd.Series, start, end):
-    smoothed = gaussian_filter1d(column_values.loc[start:end], sigma=1, mode="mirror")
-    rate_list = []
-    i = 0
-
-    while i < len(smoothed)-1:
-        rate_value = (smoothed[i+1] - smoothed[i]) / CONFIG["constants"]["acquisition_rate"]
-
-        if rate_value > 0:
-            rate_list.append(rate_value)
-            i += 1
-
-        else:
-            i += 1
-
-    if not rate_list:
-        return 0
-
-    else:
-        rate = np.max(np.array(rate_list))
-        return rate
+def calculate_rate(column_values: pd.Series, start, end, smoothed):
+    rate = (column_values.iloc[-1] - column_values.iloc[1]) / (end - start)
+    return rate
 
 
 def save_data(result: pd.DataFrame, df: pd.DataFrame, path, filename):

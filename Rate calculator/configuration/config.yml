@@ -1,8 +1,8 @@
 paths:
-  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20211109_HeLaCISD2_SOCE\\Quantification"
-  rate: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\NIKON\\20211109_HeLaCISD2_SOCE\\Quantification\\Results\\Ca\\Rate"
+  data: "C:\\Users\\u0132307\\Desktop\\Rate_calculator"
+  rate: "C:\\Users\\u0132307\\Desktop\\Rate_calculator\\Rate"
 constants:
-  start_time: 923
-  end_time: 1043
-  acquisition_time_interval: 2
-filename: "KO_5.nd2 - C=0_340_ratio.xlsx"
+  start_time: 63
+  end_time: 67
+  smoothing_constant: 3
+filename: "Copy of Ctrl-2-ATP5-Mt_raw_F_over_F0 - Copy.xlsx"

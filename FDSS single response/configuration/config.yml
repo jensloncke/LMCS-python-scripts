@@ -1,12 +1,12 @@
 paths:
-  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\FDSS\\Robbe"
-  response: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\FDSS\\Robbe"
+  data: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\FDSS\\Robbe\\20240411"
+  response: "C:\\Users\\u0132307\\Box Sync\\PhD\\Data\\FDSS\\Robbe\\20240411"
 constants:
-  baseline_start_time: 40
-  baseline_end_time: 60
-  start_time: 60
-  end_time: 540
-  acquisition_time_interval: 1
+  baseline_start_time: 50
+  baseline_end_time: 130
+  start_time: 130
+  end_time: 200
+  acquisition_time_interval: 1.11
   rate_duration: 10
 
 
