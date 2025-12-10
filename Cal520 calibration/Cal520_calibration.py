@@ -47,7 +47,7 @@ def calibrate_traces(dataframe):
         idx_maximum = slice_max.idxmax()
         min_fluo = dataframe[column_name].loc[idx_minimum]
         max_fluo = dataframe[column_name].loc[idx_maximum]
-        calibrated = 1200 * ((dataframe[column_name] - min_fluo) /
+        calibrated = 320 * ((dataframe[column_name] - min_fluo) /
                                                   (max_fluo - dataframe[column_name]))
         dataframe_calibrated[column_name] = calibrated
     return dataframe_calibrated

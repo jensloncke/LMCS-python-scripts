@@ -27,7 +27,7 @@ def determine_skip_rows(path, filename):
 
 def normalize_fluorescence(data):
     for column_name, column in data.items():
-        F0 = np.median(column.loc[CONFIG["constants"]["baseline_start_time"]:CONFIG["constants"]["baseline_end_time"],].values)
+        F0 = np.median(column.loc[CONFI<G["constants"]["baseline_start_time"]:CONFIG["constants"]["baseline_end_time"],].values)
         data[column_name] = data[column_name] / F0
     return data
 

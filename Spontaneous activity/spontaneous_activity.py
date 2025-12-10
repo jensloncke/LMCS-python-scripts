@@ -37,28 +37,46 @@ def calculate_baseline(values: pd.Series):
 
 
 def smooth_column(column, window_length):
-    return gaussian_filter1d(column.values, sigma=window_length/3, mode="mirror")
+    smoothed = column.rolling(window=CONFIG["constants"]["smoothing_constant"], center=True).mean()
+    smoothed = smoothed.dropna()
+    return smoothed
 
 
 def detect_local_max_idx(column, raw_trace, baseline):
     column = column - baseline
-    padded_vals_max = np.concatenate([column.values, [0]])
-    mask = (padded_vals_max[1:-1] >= padded_vals_max[2:]) & (padded_vals_max[1:-1] > padded_vals_max[0:-2])
-    padded_vals_min = np.concatenate([column.values[1:], [0], [np.inf]])
-    initial_mask_min = (padded_vals_min[1:-1] < padded_vals_min[2:]) & (padded_vals_min[1:-1] < padded_vals_min[0:-2])
-    rev_initial_mask_min = initial_mask_min[::-1]
-    mask_min = np.concatenate((initial_mask_min, rev_initial_mask_min))
-    approx_max_idx = np.argwhere(mask)[:,0]
-    approx_min_idx = np.argwhere(mask_min)[:,0]
+    values = column.values
+
+    # Find local maxima
+    padded_vals = np.concatenate([[0], values, [0]])
+    mask_max = (padded_vals[1:-1] >= padded_vals[2:]) & (padded_vals[1:-1] > padded_vals[:-2])
+    approx_max_idx = np.argwhere(mask_max).flatten()
+
+    # Find local minima
+    padded_min_vals = np.concatenate([[np.inf], values, [np.inf]])
+    mask_min = (padded_min_vals[1:-1] < padded_min_vals[2:]) & (padded_min_vals[1:-1] < padded_min_vals[:-2])
+    approx_min_idx = np.argwhere(mask_min).flatten()
+
     max_idx = []
-    if approx_max_idx.size != 0:
-        for approx_idx in approx_max_idx:
-            true_max_idx = np.argmax(raw_trace.values[max(0, approx_idx - 3) : min(len(raw_trace), approx_idx + 3)])
-            true_max_idx += approx_idx - 3
-            curr_min_idx = np.argmax(approx_min_idx > approx_idx)
-            true_min = np.min(raw_trace.values[max(0, curr_min_idx - 3) : min(len(raw_trace), curr_min_idx + 3)])
-            if raw_trace.values[true_max_idx] - true_min > CONFIG["constants"]["peak_threshold"]:
-                max_idx.append(true_max_idx)
+    for approx_idx in approx_max_idx:
+        # Refine true max index within ±3 window
+        window_start = max(0, approx_idx - 3)
+        window_end = min(len(raw_trace), approx_idx + 3)
+        local_window = raw_trace.values[window_start:window_end]
+        local_max_rel = np.argmax(local_window)
+        true_max_idx = window_start + local_max_rel
+
+        # Find next local minimum after approx_idx
+        following_mins = approx_min_idx[approx_min_idx > approx_idx]
+        if following_mins.size == 0:
+            continue
+        min_idx = following_mins[0]
+        min_window_start = max(0, min_idx - 3)
+        min_window_end = min(len(raw_trace), min_idx + 3)
+        true_min = np.min(raw_trace.values[min_window_start:min_window_end])
+
+        if raw_trace.values[true_max_idx] - true_min > CONFIG["constants"]["peak_threshold"]:
+            max_idx.append(true_max_idx)
+
     return max_idx
 
 

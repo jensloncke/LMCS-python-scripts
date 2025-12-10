@@ -1,7 +1,7 @@
 paths:
-  raw_acquisitions: "C:\\Users\\u0132307\\OneDrive - KU Leuven\\NIKON\\20240629_CN_spontaneous"
-  data: "C:\\Users\\u0132307\\OneDrive - KU Leuven\\PhD\\Data\\NIKON\\20240629_CN_spontaneous\\Multi_measure"
-  results: "C:\\Users\\u0132307\\OneDrive - KU Leuven\\PhD\\Data\\NIKON\\20240629_CN_spontaneous\\Traces"
+  raw_acquisitions: "C:\\Users\\u0132307\\Desktop\\TO ANALYZE\\20251023_Trex_CISD2_mutants"
+  data: "C:\\Users\\u0132307\\OneDrive - KU Leuven\\PhD\\Data\\Nikon\\20251023_Trex_CISD2_mutants\\Multi_measure"
+  results: "C:\\Users\\u0132307\\OneDrive - KU Leuven\\PhD\\Data\\Nikon\\20251023_Trex_CISD2_mutants\\Traces"
 normalize_fluorescence: False
 constants:
   F0_start_time: 2

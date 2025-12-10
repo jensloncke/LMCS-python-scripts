@@ -1,0 +1,9 @@
+paths:
+  data: "C:\\Users\\u0132307\\OneDrive - KU Leuven\\PhD\\Data\\Nikon\\20250821_ERcepia_F4\\Traces"
+  rate: "C:\\Users\\u0132307\\OneDrive - KU Leuven\\PhD\\Data\\Nikon\\20250821_ERcepia_F4\\Results\\EGTA"
+constants:
+  start_time: 60
+  end_time: 120
+  smoothing_constant: 3
+filename: "KO_1.nd2 - C=1_mtCEPIA.xlsx"
+sheetname: "Sheet1"

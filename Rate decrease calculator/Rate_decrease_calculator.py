@@ -59,8 +59,8 @@ def calculate_rate(column_values: pd.Series, start, end, smoothed):
             rate = (value - prev_value) / (index - prev_index)
             rate_list.append(rate)
         prev_index, prev_value = index, value
-    max_rate = max(rate_list)
-    return max_rate
+    min_rate = min(rate_list)
+    return min_rate
 
 
 def save_data(result: pd.DataFrame, df: pd.DataFrame, path, filename):

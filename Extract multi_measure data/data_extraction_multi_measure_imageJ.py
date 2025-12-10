@@ -3,6 +3,7 @@ import numpy as np
 import plotly.express as px
 import os
 import nd2reader
+from nd2reader.exceptions import EmptyFileError
 from io import FileIO
 from pathlib import Path
 from configuration.config import CONFIG
@@ -39,9 +40,21 @@ def get_time(filename, df: pd.DataFrame):
 def extract_time_info(filename, df: pd.DataFrame):
     path_acq = CONFIG["paths"]["raw_acquisitions"]
     filename_nd2 = filename.split(" - C=")[0]
-    video = nd2reader.ND2Reader(path_acq / filename_nd2)
-    time_information = video.timesteps / 1000
     df_copy = df.copy()
+    n_rows = len(df_copy)
+    try:
+        video = nd2reader.ND2Reader(path_acq / filename_nd2)
+        if not video.axes or not hasattr(video, "timesteps"):
+            raise ValueError("No valid axes or timesteps in ND2 file.")
+        time_information = video.timesteps / 1000
+        # Convert to list and validate length
+        time_information = list(time_information)
+        if len(time_information) != n_rows:
+            raise ValueError(f"Mismatch: {len(time_information)} time points vs {num_rows} rows in DataFrame.")
+
+    except (EmptyFileError, ValueError, FileNotFoundError, Exception) as e:
+        print(f"Warning: Could not extract time from ND2 file. Reason: {e}. Defaulting to 2 s acquisition interval.")
+        time_information = np.arange(0, len(df_copy) * 2, 2)
     df_copy.insert(0, 'Time (s)', time_information)
     timed_df = df_copy.set_index('Time (s)')
     return timed_df

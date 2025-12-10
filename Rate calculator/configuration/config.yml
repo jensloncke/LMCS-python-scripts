@@ -1,8 +1,9 @@
 paths:
-  data: "C:\\Users\\u0132307\\Desktop\\Rate_calculator"
-  rate: "C:\\Users\\u0132307\\Desktop\\Rate_calculator\\Rate"
+  data: "C:\\Users\\u0132307\\OneDrive - KU Leuven\\PhD\\Data\\Nikon\\20250612_stellate_FCCP\\Traces"
+  rate: "C:\\Users\\u0132307\\OneDrive - KU Leuven\\PhD\\Data\\Nikon\\20250612_stellate_FCCP\\Results\\FCCP"
 constants:
-  start_time: 63
-  end_time: 67
+  start_time: 224
+  end_time: 254
   smoothing_constant: 3
-filename: "Copy of Ctrl-2-ATP5-Mt_raw_F_over_F0 - Copy.xlsx"
+filename: "A_1001.nd2 - ratio.xlsx"
+sheetname: "FF0_resp"

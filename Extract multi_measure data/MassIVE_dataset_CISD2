@@ -1,0 +1,15 @@
+
+from ftplib import FTP
+
+ftp = FTP('massive.ucsd.edu')
+ftp.login()  # anonymous login
+ftp.cwd('/MSV000087436/')
+files = ftp.nlst()
+
+for f in files:
+    if f.endswith('.mzid'):
+        print(f"Downloading {f}...")
+        with open(f, 'wb') as local_file:
+            ftp.retrbinary('RETR ' + f, local_file.write)
+
+ftp.quit()
