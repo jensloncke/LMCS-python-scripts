@@ -43,7 +43,7 @@ def extract_time_info(filename, df: pd.DataFrame):
     df_copy = df.copy()
     n_rows = len(df_copy)
     try:
-        video = nd2reader.ND2Reader(path_acq / filename_nd2)
+        video = nd2reader.ND2Reader(str(path_acq / filename_nd2))
         if not video.axes or not hasattr(video, "timesteps"):
             raise ValueError("No valid axes or timesteps in ND2 file.")
         time_information = video.timesteps / 1000

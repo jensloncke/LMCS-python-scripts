@@ -1,8 +1,8 @@
 paths:
-  raw_acquisitions: "C:\\Users\\u0132307\\Desktop\\TO ANALYZE\\20251023_Trex_CISD2_mutants"
-  data: "C:\\Users\\u0132307\\OneDrive - KU Leuven\\PhD\\Data\\Nikon\\20251023_Trex_CISD2_mutants\\Multi_measure"
-  results: "C:\\Users\\u0132307\\OneDrive - KU Leuven\\PhD\\Data\\Nikon\\20251023_Trex_CISD2_mutants\\Traces"
-normalize_fluorescence: False
+  raw_acquisitions: "C:\\Users\\u0132307\\Desktop\\TO ANALYZE\\20260116_TrexRyR2_ryanodine_mito"
+  data: "C:\\Users\\u0132307\\OneDrive - KU Leuven\\PhD\\Data\\Nikon\\20260116_trexRyR2_CISD2_ermtCEPIA\\Multi_measure_transfected"
+  results: "C:\\Users\\u0132307\\OneDrive - KU Leuven\\PhD\\Data\\Nikon\\20260116_trexRyR2_CISD2_ermtCEPIA\\Traces"
+normalize_fluorescence: True
 constants:
   F0_start_time: 2
   F0_end_time: 25

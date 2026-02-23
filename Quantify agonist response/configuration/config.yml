@@ -1,19 +1,19 @@
 paths:
-  data: "C:\\Users\\u0132307\\OneDrive - KU Leuven\\PhD\\Data\\Nikon\\20251023_Trex_CISD2_mutants\\Traces"
-  results: "C:\\Users\\u0132307\\OneDrive - KU Leuven\\PhD\\Data\\Nikon\\20251023_Trex_CISD2_mutants\\Results"
+  data: "C:\\Users\\u0132307\\OneDrive - KU Leuven\\PhD\\Data\\Nikon\\20260116_trexRyR2_CISD2_ermtCEPIA\\Traces"
+  results: "C:\\Users\\u0132307\\OneDrive - KU Leuven\\PhD\\Data\\Nikon\\20260116_trexRyR2_CISD2_ermtCEPIA\\Results\\erCEPIA"
 constants:
   smoothing_constant: 4
-  stdev_non-oscillating: 0.03
-  peak_threshold: 0.05
-  basal_start_time: 2
-  basal_end_time: 25
-  baseline_start_time: 110
-  baseline_end_time: 130
-  osc_start_time: 130
-  osc_end_time: 190
+  peak_threshold: 0.2
+  basal_start_time: 600
+  basal_end_time: 630
+  baseline_start_time: 600
+  baseline_end_time: 630
+  osc_start_time: 10
+  osc_end_time: 130
 # write null if you want to execute the script for all data files in your path
-filename: "CISD2_3.nd2 - ratio.xlsx"
+filename: "CTRL_2.nd2 - C=1_F4.xlsx"
 sheetname: "FF0_resp"
-Genotype: "CISD2"
-Dose: "0.5_mM_Caffeine"
-ID: "20251023_CISD2_3"
+Genotype: "CTRL"
+Dose: "1.5_mM_Ca2+"
+ID: "20260116_CTRL_2"
+erCEPIA: True
