@@ -239,7 +239,12 @@ def main():
             df.dropna(inplace=True)
             data = set_index(df)
             dataframe = data.copy()
-            df = subtract_baseline(data, CONFIG["constants"]["baseline_start_time"], CONFIG["constants"]["baseline_end_time"])
+            df = subtract_baseline(data,
+                                CONFIG["constants"]["baseline_start_time"],
+                                CONFIG["constants"]["baseline_end_time"],
+                                CONFIG["erCEPIA"],
+                                CONFIG["constants"]["osc_start_time"],
+                                CONFIG["constants"]["osc_end_time"])
             result = quantify(dataframe, df, filename)
             median_cell_idx = find_median_cell(result)
             traces, median_trace = extract_traces_from_data(dataframe, median_cell_idx)
