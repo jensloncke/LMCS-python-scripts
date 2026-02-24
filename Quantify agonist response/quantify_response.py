@@ -239,7 +239,7 @@ def main():
             df.dropna(inplace=True)
             data = set_index(df)
             dataframe = data.copy()
-            df = substract_baseline(data, CONFIG["constants"]["baseline_start_time"], CONFIG["constants"]["baseline_end_time"])
+            df = subtract_baseline(data, CONFIG["constants"]["baseline_start_time"], CONFIG["constants"]["baseline_end_time"])
             result = quantify(dataframe, df, filename)
             median_cell_idx = find_median_cell(result)
             traces, median_trace = extract_traces_from_data(dataframe, median_cell_idx)
@@ -282,7 +282,7 @@ def main():
         median_trace.to_csv(os.path.join(path_traces, save_name_median_trace), sep=";", decimal=".")
         plot_median_trace(median_trace.iloc[:, [0]], save_name_plot, path_traces)
         with open(path_osc / save_name_yaml,
-                  'w') as file:  # with zorgt er voor dat file.close niet meer nodig is na with block
+                  'w') as file:
             yaml.dump(CONFIG["constants"], file, sort_keys=False)
 
 
