@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
-from scipy.signal import find_peaks
+from scipy.signal import find_peaks #for peak responses
+from scipy.stats import linregress #for sigmoidal curves
 import plotly.express as px
 import plotly.offline as po
 from configuration.config import CONFIG
@@ -79,6 +80,33 @@ def detect_peak_polarity(smoothed, baseline_smoothed):
         return "positive" if pos_strength > neg_strength else "negative"
 
 
+def extract_sigmoidal_metrics(column: pd.Series,
+                              final_prom_threshold: float):
+    values = column.values
+    times = column.index.values
+    baseline = float(values[0])
+    max_amp, first_amp, avg_amp = float(np.max(values)), float(np.max(values)), float(np.max(values))
+    total_rise = max_amp - baseline
+
+    if total_rise < final_prom_threshold:
+        # Equivalent to 'no oscillation detected'
+        return (
+            0.0,  # mean
+            0.0,  # max
+            0.0,  # first
+            np.nan,  # t_max
+            np.nan,  # t_first
+        )
+    else:
+        t_max, t_first = (times[np.argmax(values)] - CONFIG["constants"]["osc_start_time"],
+                           times[np.argmax(values)] - CONFIG["constants"]["osc_start_time"])
+        return(
+            max_amp,
+            avg_amp,
+            first_amp,
+            t_max,
+            t_first)
+
 
 def detect_peaks_auto(
     smoothed: pd.Series,
@@ -123,8 +151,6 @@ def detect_peaks_auto(
 def extract_peak_values(column: pd.Series, peak_idx: list[int], polarity: str):
     """
     Returns: mean_ampl, max_ampl, first_ampl, t_MAX, t_FIRST
-
-    - For negative polarity, amplitudes are still returned as magnitudes (absolute value).
     - t_MAX = time of the largest detected peak (by magnitude) among detected peaks.
     - t_FIRST = time of the first detected peak in order.
     """
@@ -173,8 +199,13 @@ def quantify(data: pd.DataFrame, df: pd.DataFrame, filename):
                                     oscillations[column_name],
                                     smoothed_baselines[column_name],
                                     CONFIG["constants"]["peak_threshold"])
-        avg_peak, max_peak, first_peak, t_max, t_first = extract_peak_values(oscillations[column_name], max_idx, polarity)
-        auc = calculate_auc(oscillations[column_name])
+        if len(max_idx) == 0:
+            #Sigmoidal fallback handling
+            avg_peak, max_peak, first_peak, t_max, t_first = extract_sigmoidal_metrics(oscillations[column_name],
+                                                                                       CONFIG["constants"]["peak_threshold"])
+        else:
+            avg_peak, max_peak, first_peak, t_max, t_first = extract_peak_values(oscillations[column_name], max_idx, polarity)
+            auc = calculate_auc(oscillations[column_name])
         if len(max_idx) == 0:
             results.loc["Oscillations", column_name] = 0
             results.loc["Osc_cells", column_name] = 0.0

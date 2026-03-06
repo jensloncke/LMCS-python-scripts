@@ -1,19 +1,19 @@
 paths:
   data: "C:\\Users\\u0132307\\OneDrive - KU Leuven\\PhD\\Data\\Nikon\\20260116_trexRyR2_CISD2_ermtCEPIA\\Traces"
-  results: "C:\\Users\\u0132307\\OneDrive - KU Leuven\\PhD\\Data\\Nikon\\20260116_trexRyR2_CISD2_ermtCEPIA\\Results\\erCEPIA"
+  results: "C:\\Users\\u0132307\\OneDrive - KU Leuven\\PhD\\Data\\Nikon\\20260116_trexRyR2_CISD2_ermtCEPIA\\Results\\test"
 constants:
   smoothing_constant: 4
-  peak_threshold: 0.2
-  basal_start_time: 600
-  basal_end_time: 630
-  baseline_start_time: 600
-  baseline_end_time: 630
-  osc_start_time: 10
-  osc_end_time: 130
+  peak_threshold: 0.05
+  basal_start_time: 0
+  basal_end_time: 20
+  baseline_start_time: 60
+  baseline_end_time: 80
+  osc_start_time: 80
+  osc_end_time: 200
 # write null if you want to execute the script for all data files in your path
-filename: "CTRL_2.nd2 - C=1_F4.xlsx"
-sheetname: "FF0_resp"
+filename: "20251125_Cal520_MND3_RA5_Glut+FCCP_001.nd2 - C=0.xlsx"
+sheetname: "Sheet1"
 Genotype: "CTRL"
 Dose: "1.5_mM_Ca2+"
 ID: "20260116_CTRL_2"
-erCEPIA: True
+erCEPIA: False
