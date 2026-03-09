@@ -203,6 +203,7 @@ def quantify(data: pd.DataFrame, df: pd.DataFrame, filename):
             #Sigmoidal fallback handling
             avg_peak, max_peak, first_peak, t_max, t_first = extract_sigmoidal_metrics(oscillations[column_name],
                                                                                        CONFIG["constants"]["peak_threshold"])
+            auc = calculate_auc(oscillations[column_name])
         else:
             avg_peak, max_peak, first_peak, t_max, t_first = extract_peak_values(oscillations[column_name], max_idx, polarity)
             auc = calculate_auc(oscillations[column_name])
