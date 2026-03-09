@@ -101,8 +101,8 @@ def extract_sigmoidal_metrics(column: pd.Series,
         t_max, t_first = (times[np.argmax(values)] - CONFIG["constants"]["osc_start_time"],
                            times[np.argmax(values)] - CONFIG["constants"]["osc_start_time"])
         return(
-            max_amp,
             avg_amp,
+            max_amp,
             first_amp,
             t_max,
             t_first)
